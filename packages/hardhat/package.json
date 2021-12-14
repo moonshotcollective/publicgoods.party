@@ -11,11 +11,15 @@
     "eslint-plugin-prettier": "^3.4.0"
   },
   "dependencies": {
-    "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers",
-    "@nomiclabs/hardhat-waffle": "^2.0.0",
-    "@openzeppelin/contracts": "^4.3.3",
+    "@nomiclabs/hardhat-ethers": "^2.0.2",
+    "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "@openzeppelin/contracts": "3.4.1-solc-0.7-2",
     "@tenderly/hardhat-tenderly": "^1.0.10",
     "@nomiclabs/hardhat-etherscan": "^2.1.7",
+    "@uniswap/sdk-core": "^3.0.1",
+    "@uniswap/v2-periphery": "^1.1.0-beta.0",
+    "@uniswap/v3-periphery": "^1.1.1",
+    "@uniswap/v3-sdk": "^3.3.2",
     "chai": "^4.2.0",
     "chalk": "^4.1.0",
     "dotenv": "^8.2.0",
@@ -30,7 +34,7 @@
   },
   "scripts": {
     "chain": "hardhat node --network hardhat --no-deploy",
-    "fork": "hardhat node --no-deploy --network hardhat --fork https://mainnet.infura.io/v3/460f40a260564ac4a4f4b3fffb032dad",
+    "fork": "hardhat node --no-deploy --network hardhat --fork https://eth-mainnet.alchemyapi.io/v2/1M9YpnP31QLtcsM3DhmFGCSATkjW8PrP --fork-block-number 13186295",
     "test": "hardhat test --network hardhat",
     "compile": "hardhat compile",
     "deploy": "hardhat deploy --export-all ../react-app/src/contracts/hardhat_contracts.json",
