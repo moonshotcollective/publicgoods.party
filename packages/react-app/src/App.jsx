@@ -284,7 +284,25 @@ function App(props) {
             */}
 
           <Contract
-            name="YourContract"
+            name="GrantRegistry"
+            price={price}
+            signer={userSigner}
+            provider={localProvider}
+            address={address}
+            blockExplorer={blockExplorer}
+            contractConfig={contractConfig}
+          />
+          <Contract
+            name="MockToken"
+            price={price}
+            signer={userSigner}
+            provider={localProvider}
+            address={address}
+            blockExplorer={blockExplorer}
+            contractConfig={contractConfig}
+          />
+          <Contract
+            name="DonationToken"
             price={price}
             signer={userSigner}
             provider={localProvider}
