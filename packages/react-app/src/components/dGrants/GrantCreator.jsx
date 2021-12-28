@@ -14,7 +14,12 @@ export default function ({
   const [payeeAddress, setPayeeAddress] = useState("...");
 
   function submitGrant() {
-    tx(writeContracts.GrantRegistry.createGrant(ownerAddress, payeeAddress, ("1", "metadatahash")));
+    tx(writeContracts.GrantRegistry.createGrant(ownerAddress, payeeAddress, testTuple));
+  }
+
+  const testTuple = {
+    protocol: 1,
+    pointer: "metadatahash"
   }
 
   return (
@@ -22,7 +27,7 @@ export default function ({
       <h1>MVP Grant Creator</h1>
       <br />
       <Row justify="center">
-        <Col span={8}>
+        <Col lg={8} sm={16}>
           <Form
             name="Create a Grant"
             onFinish={submitGrant}
