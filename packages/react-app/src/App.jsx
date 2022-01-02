@@ -33,6 +33,7 @@ import { useStaticJsonRPC } from "./hooks";
 import { ExampleUI, GrantUI, Hints, Home, Subgraph } from "./views";
 
 const { ethers } = require("ethers");
+const axios = require("axios");
 /*
     Welcome to 🏗 scaffold-eth !
 
