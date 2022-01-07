@@ -30,9 +30,10 @@ import externalContracts from "./contracts/external_contracts";
 import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
 import { useStaticJsonRPC } from "./hooks";
-import { ExampleUI, Hints, Home, Subgraph } from "./views";
+import { ExampleUI, GrantUI, Hints, Home, Subgraph } from "./views";
 
 const { ethers } = require("ethers");
+const axios = require("axios");
 /*
     Welcome to 🏗 scaffold-eth !
 
@@ -257,6 +258,9 @@ function App(props) {
         <Menu.Item key="/debug">
           <Link to="/debug">Debug Contracts</Link>
         </Menu.Item>
+        <Menu.Item key="/grantUI">
+          <Link to="/grantUI">Grant UI</Link>
+        </Menu.Item>
         <Menu.Item key="/hints">
           <Link to="/hints">Hints</Link>
         </Menu.Item>
@@ -331,6 +335,13 @@ function App(props) {
             writeContracts={writeContracts}
             readContracts={readContracts}
             purpose={purpose}
+          />
+        </Route>
+        <Route path="/grantui">
+          <GrantUI 
+          tx={tx} 
+          writeContracts={writeContracts}
+          mainnetProvider={mainnetProvider}
           />
         </Route>
         <Route path="/mainnetdai">
