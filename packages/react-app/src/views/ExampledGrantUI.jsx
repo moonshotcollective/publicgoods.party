@@ -4,19 +4,10 @@ import { Button, Card, DatePicker, Divider, Input, Progress, Slider, Spin, Switc
 import React, { useState } from "react";
 import { Address, Balance, Events, GrantCreator } from "../components";
 
-export default function GrantUI({
-  tx,
-  writeContracts,
-  mainnetProvider
-}) {
-
+export default function GrantUI({ tx, writeContracts, mainnetProvider }) {
   return (
-    <div>
-      <GrantCreator
-      text2display={"Hello World!"} 
-      tx={tx}
-      writeContracts={writeContracts}
-      />
+    <div style={{ marginTop: 60 }}>
+      <GrantCreator text2display={"Hello World!"} tx={tx} writeContracts={writeContracts} />
     </div>
   );
 }
