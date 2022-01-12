@@ -30,7 +30,7 @@ import externalContracts from "./contracts/external_contracts";
 import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
 import { useStaticJsonRPC } from "./hooks";
-import { ExampleUI, GrantUI, Hints, Home, Subgraph } from "./views";
+import { DetailedGrantView, ExampleUI, GrantUI, Hints, Home, Subgraph } from "./views";
 
 const { ethers } = require("ethers");
 const axios = require("axios");
@@ -267,6 +267,10 @@ function App(props) {
         <Route exact path="/">
           {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
           <Home yourLocalBalance={yourLocalBalance} readContracts={readContracts} />
+        </Route>
+        <Route path="/grant/:metaPtr">
+          <DetailedGrantView 
+          />
         </Route>
         <Route exact path="/debug">
           {/*

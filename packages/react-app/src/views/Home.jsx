@@ -1,8 +1,9 @@
 import React from "react";
 import { List, Card, Descriptions } from "antd";
-import { Link } from "react-router-dom";
+import { Link} from "react-router-dom";
 import { useContractReader } from "eth-hooks";
 import { Address } from "../components";
+import { DetailedGrantView, NameViewer } from "./";
 
 /**
  * web3 props can be passed from '../App.jsx' into your local view component for use
@@ -11,10 +12,7 @@ import { Address } from "../components";
  * @returns react component
  */
 function Home({ mainnetProvider, readContracts, blockExplorer }) {
-  // you can also use hooks locally in your component of choice
-  // in this case, let's keep track of 'purpose' variable from our contract
   const allGrants = useContractReader(readContracts, "GrantRegistry", "getAllGrants");
-
   return (
     <div style={{ marginTop: 60 }}>
       <List
@@ -39,7 +37,10 @@ function Home({ mainnetProvider, readContracts, blockExplorer }) {
                     }}
                   >
                     <div style={{ fontSize: "1rem", fontWeight: 500 }}>
-                      <Link to={`/grant/sample-name`}>Name (WIP)</Link>
+                      {/*
+                        THE NAME HERE NEEDS TO BE PULLED FROM IPFS INTO AN OBJECT.
+                      */}
+                      <Link to={`/grant/${item.metaPtr.pointer}`}><NameViewer metaPtr={item.metaPtr.pointer}/><NameViewer /></Link>
                     </div>
                     {/* <Address
                       fontSize="15"
