@@ -7,7 +7,9 @@ const localChainId = "31337";
 const sleep = (ms) =>
   new Promise((r) =>
     setTimeout(() => {
-      // console.log(`waited for ${(ms / 1000).toFixed(3)} seconds`);
+      console.log(
+        `waited for ${(ms / 1000).toFixed(3)} seconds before moving on`
+      );
       r();
     }, ms)
   );
@@ -29,35 +31,29 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   ];
 
   const GrantRegistry = await deploy("GrantRegistry", {
-    // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
-    // args: [ "Hello", ethers.utils.parseEther("1.5") ],
     log: true,
   });
 
   const Weth = await deploy("Weth", {
-    // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
-    args: [ethers.utils.parseEther("1.5")],
+    args: [ethers.utils.parseEther("10000")],
     log: true,
   });
 
   const MockToken = await deploy("MockToken", {
-    // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
     args: [ethers.utils.parseEther("1.5")],
     log: true,
   });
 
   const DonationToken = await deploy("DonationToken", {
-    // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
     args: [ethers.utils.parseEther("1.5")],
     log: true,
   });
 
-  await deploy("GrantRound", {
-    // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
+  const GrantRound = await deploy("GrantRound", {
     from: deployer,
     args: [
       // meta admin address
@@ -91,7 +87,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
       GrantRegistry.address,
       // Donation Token
       DonationToken.address,
-      // Factory Address
+      // UNI v2 Factory Address - for chain we are deploying to.
       "0x807a1752402D21400D555e1CD7f175566088b955",
       // Weth Address
       Weth.address,
@@ -102,12 +98,12 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   // Verify your contracts with Etherscan
   // You don't want to verify on localhost
   if (chainId !== localChainId) {
-    //   await sleep(15000);
-    //   await run("verify:verify", {
-    //     address: YourContract.address,
-    //     contract: "contracts/YourContract.sol:YourContract",
-    //     contractArguments: [],
-    //   });
+    sleep(5000);
+    await run("verify:verify", {
+      address: GrantRound.address,
+      contract: "contracts/GrantRound.sol:GrantRound",
+      contractArguments: [],
+    });
   }
 };
 
