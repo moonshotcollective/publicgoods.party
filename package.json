@@ -66,8 +66,12 @@
       "**/hardhat-ts/**"
     ]
   },
-  "dependencies": {},
+  "dependencies": {
+    "@uniswap/smart-order-router": "^2.5.12"
+  },
   "devDependencies": {
+    "@uniswap/sdk-core": "^3.0.1",
+    "@uniswap/v3-sdk": "^3.8.1",
     "husky": "^7.0.2"
   }
 }

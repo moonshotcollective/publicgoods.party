@@ -35,12 +35,15 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     log: true,
   });
 
+  // I think that weth needs to be imported from mainnet
+  /*
   const Weth = await deploy("Weth", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
      args: [ ethers.utils.parseEther("1.5") ],
     log: true,
   });
+  */
 
   const MockToken = await deploy("MockToken", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
@@ -92,9 +95,9 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
          //Donation Token
          DonationToken.address,
          //Factory Address
-         "0x807a1752402D21400D555e1CD7f175566088b955",
+         "0x1F98431c8aD98523631AE4a59f267346ea31F984",
          //Weth Address
-         Weth.address
+         "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
     ],
     log: true,
   });

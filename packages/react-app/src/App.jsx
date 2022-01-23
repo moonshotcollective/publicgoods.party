@@ -30,7 +30,7 @@ import externalContracts from "./contracts/external_contracts";
 import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
 import { useStaticJsonRPC } from "./hooks";
-import { DetailedGrantView, ExampleUI, GrantUI, Hints, Home, Subgraph } from "./views";
+import { DonationView ,DetailedGrantView, ExampleUI, GrantUI, Hints, Home, Subgraph } from "./views";
 
 const { ethers } = require("ethers");
 const axios = require("axios");
@@ -258,6 +258,9 @@ function App(props) {
         <Menu.Item key="/grantUI">
           <Link to="/grantUI">Create Grant</Link>
         </Menu.Item>
+        <Menu.Item key="/donation">
+          <Link to="/donation">Donate to a Grant</Link>
+        </Menu.Item>
         <Menu.Item key="/debug">
           <Link to="/debug">Debug Contracts</Link>
         </Menu.Item>
@@ -269,7 +272,12 @@ function App(props) {
           <Home yourLocalBalance={yourLocalBalance} readContracts={readContracts} />
         </Route>
         <Route path="/grant/:metaPtr">
-          <DetailedGrantView 
+          <DetailedGrantView />
+        </Route>
+        <Route path="/donation">
+          <DonationView 
+            mainnetProvider={mainnetProvider}
+            address={address}
           />
         </Route>
         <Route exact path="/debug">
@@ -305,6 +313,16 @@ function App(props) {
             address={address}
             blockExplorer={blockExplorer}
             contractConfig={contractConfig}
+          />
+          <Contract
+            name="FACTORY"
+            customContract={mainnetContracts && mainnetContracts.contracts && mainnetContracts.contracts.FACTORY}
+            signer={userSigner}
+            provider={mainnetProvider}
+            address={address}
+            blockExplorer={blockExplorer}
+            contractConfig={contractConfig}
+            chainid={1}
           />
         </Route>
         <Route path="/grantui">
