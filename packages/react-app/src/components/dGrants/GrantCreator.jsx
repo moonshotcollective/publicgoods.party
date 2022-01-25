@@ -7,7 +7,6 @@ const axios = require("axios");
 
 export default function ({
   //inputs
-  text2display,
   tx,
   writeContracts,
   mainnetProvider

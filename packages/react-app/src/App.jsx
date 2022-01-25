@@ -24,13 +24,14 @@ import {
   Ramp,
   ThemeSwitch,
 } from "./components";
+import DonationComp from "./components/DonationComp";
 import { ALCHEMY_KEY, NETWORKS } from "./constants";
 import externalContracts from "./contracts/external_contracts";
 // contracts
 import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
 import { useStaticJsonRPC } from "./hooks";
-import { DonationView ,DetailedGrantView, ExampleUI, GrantUI, Hints, Home, Subgraph } from "./views";
+import { DonationView, DetailedGrantView, ExampleUI, GrantUI, Hints, Home, Subgraph } from "./views";
 
 const { ethers } = require("ethers");
 const axios = require("axios");
@@ -276,8 +277,9 @@ function App(props) {
         </Route>
         <Route path="/donation">
           <DonationView 
-            mainnetProvider={mainnetProvider}
-            address={address}
+          address={address}
+          mainnetProvider={mainnetProvider}
+          tx={tx}
           />
         </Route>
         <Route exact path="/debug">
