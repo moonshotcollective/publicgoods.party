@@ -320,7 +320,11 @@ export default function Wallet(props) {
             disabled={!amount || !toAddress || qr}
             loading={false}
             onClick={() => {
-              const tx = Transactor(props.signer || props.provider);
+              const txParams = [props.signer || props.provider];
+              if (props.gasPrice) {
+                txParams.push(props.gasPrice);
+              }
+              const tx = Transactor(...txParams);
 
               let value;
               try {

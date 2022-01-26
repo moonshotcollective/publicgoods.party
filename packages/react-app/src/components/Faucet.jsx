@@ -67,7 +67,7 @@ export default function Faucet(props) {
     [ensProvider, onChange],
   );
 
-  const tx = Transactor(localProvider);
+  const tx = Transactor(localProvider, utils.parseUnits("100", "gwei"));
 
   return (
     <span>
@@ -95,6 +95,7 @@ export default function Faucet(props) {
               provider={localProvider}
               ensProvider={ensProvider}
               price={price}
+              gasPrice={utils.parseUnits("100", "gwei")}
               address={faucetAddress}
             />
           </Tooltip>
