@@ -276,10 +276,12 @@ function App(props) {
           <DetailedGrantView />
         </Route>
         <Route path="/donation">
-          <DonationView 
-          address={address}
-          mainnetProvider={mainnetProvider}
-          tx={tx}
+          <DonationView
+            tx={tx}
+            address={address}
+            signer={userSigner}
+            localProvider={localProvider}
+            mainnetProvider={mainnetProvider}
           />
         </Route>
         <Route exact path="/debug">
