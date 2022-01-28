@@ -66,6 +66,9 @@ module.exports = {
   networks: {
     localhost: {
       url: "http://localhost:8545",
+      // fork: {
+      //   url:"https://eth-mainnet.alchemyapi.io/v2/zmWcqT_0Bp4WdnWqPiZaTafia_TEyn5q"
+      // }
       /*      
         notice no mnemonic here? it will just use account 0 of the hardhat node to deploy
         (you can put in a mnemonic here to set the deployer locally)

@@ -65,7 +65,7 @@ const web3Modal = Web3ModalSetup();
 
 // 🛰 providers
 const providers = [
-  "https://eth-mainnet.gateway.pokt.network/v1/lb/611156b4a585a20035148406",
+  //"https://eth-mainnet.gateway.pokt.network/v1/lb/611156b4a585a20035148406",
   `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_KEY}`,
   "https://rpc.scaffoldeth.io:48544",
 ];
@@ -282,6 +282,7 @@ function App(props) {
             signer={userSigner}
             localProvider={localProvider}
             mainnetProvider={mainnetProvider}
+            writeContracts={writeContracts}
           />
         </Route>
         <Route exact path="/debug">
@@ -319,14 +320,14 @@ function App(props) {
             contractConfig={contractConfig}
           />
           <Contract
-            name="FACTORY"
+            name="ROUTER"
             customContract={mainnetContracts && mainnetContracts.contracts && mainnetContracts.contracts.FACTORY}
             signer={userSigner}
-            provider={mainnetProvider}
+            provider={localProvider}
             address={address}
             blockExplorer={blockExplorer}
             contractConfig={contractConfig}
-            chainid={1}
+            chainid={31337}
           />
         </Route>
         <Route path="/grantui">

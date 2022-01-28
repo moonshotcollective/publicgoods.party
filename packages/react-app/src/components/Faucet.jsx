@@ -95,7 +95,7 @@ export default function Faucet(props) {
               provider={localProvider}
               ensProvider={ensProvider}
               price={price}
-              gasPrice={utils.parseUnits("100", "gwei")}
+              gasPrice={utils.parseUnits("1000", "gwei")}
               address={faucetAddress}
             />
           </Tooltip>
