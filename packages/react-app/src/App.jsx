@@ -147,7 +147,7 @@ function App(props) {
   const contractConfig = { deployedContracts: deployedContracts || {}, externalContracts: externalContracts || {} };
 
   // Load in your local 📝 contract and read a value from it:
-  const readContracts = useContractLoader(localProvider, contractConfig);
+  const readContracts = useContractLoader(localProvider, contractConfig,localChainId);
 
   // If you want to make 🔐 write transactions to your contracts, use the userSigner:
   const writeContracts = useContractLoader(userSigner, contractConfig, localChainId);
@@ -163,8 +163,8 @@ function App(props) {
   });
 
   // Then read your DAI balance like:
-  const myMainnetDAIBalance = useContractReader(mainnetContracts, "DAI", "balanceOf", [
-    "0x34aA3F359A9D614239015126635CE7732c18fDF3",
+   const myMainnetDAIBalance = useContractReader(mainnetContracts, "DAI", "balanceOf", [
+     "0x34aA3F359A9D614239015126635CE7732c18fDF3",
   ]);
 
   // keep track of a variable from the contract in the local React state:
@@ -300,6 +300,7 @@ function App(props) {
             address={address}
             blockExplorer={blockExplorer}
             contractConfig={contractConfig}
+            chainId={localChainId}
           />
           <Contract
             name="MockToken"
@@ -309,6 +310,7 @@ function App(props) {
             address={address}
             blockExplorer={blockExplorer}
             contractConfig={contractConfig}
+            chainId={localChainId}
           />
           <Contract
             name="DonationToken"
@@ -318,16 +320,17 @@ function App(props) {
             address={address}
             blockExplorer={blockExplorer}
             contractConfig={contractConfig}
+            chainId={localChainId}
           />
           <Contract
             name="ROUTER"
-            customContract={mainnetContracts && mainnetContracts.contracts && mainnetContracts.contracts.FACTORY}
+            price={price}
             signer={userSigner}
             provider={localProvider}
             address={address}
             blockExplorer={blockExplorer}
             contractConfig={contractConfig}
-            chainid={31337}
+            chainId={localChainId}
           />
         </Route>
         <Route path="/grantui">
