@@ -1,12 +1,11 @@
 import { React, useState } from "react";
 import { AddressInput } from "..";
-import { Form, Row, Col, Button, Input } from "antd";
+import { Form, Row, Col, Button, Input, InputNumber } from "antd";
 import { PINATA_API_KEY, PINATA_API_SECRET } from "../../constants";
 
 const axios = require("axios");
 
 export default function ({
-  //inputs
   tx,
   writeContracts,
   mainnetProvider
@@ -17,7 +16,11 @@ export default function ({
   const [grantHash, setGrantHash] = useState("...");
   const [ownerAddress, setOwnerAddress] = useState("...");
   const [payeeAddress, setPayeeAddress] = useState("...");
+  const [matchingTokenAddress, setMatchingTokenAddress] = useState("0xDe30da39c46104798bB5aA3fe8B9e0e1F348163F");
+  const [startTime, setStartTime] = useState("...");
+  const [endTime, setEndTime] = useState("...");
 
+  // I am not 100% sure if this is the correct metadata structure for the grant round but oh well
   const grantObject = {
     title: grantTitle,
     description: grantDescription,
@@ -39,7 +42,7 @@ export default function ({
       })
       .then(function (response) {
         testTuple.pointer = response.data.IpfsHash;
-        tx(writeContracts.GrantRegistry.createGrant(ownerAddress, payeeAddress, testTuple));
+        tx(writeContracts.GrantRoundManager.createGrantRound(ownerAddress, payeeAddress, matchingTokenAddress, startTime, endTime, testTuple));
       })
       .catch(function (error) {
         console.log(error);
@@ -52,12 +55,12 @@ export default function ({
 
   return (
     <div>
-      <h1>MVP Grant Creator</h1>
+      <h1>Grant Round Creator</h1>
       <br />
       <Row justify="center">
         <Col lg={8} sm={16}>
           <Form
-            name="Create a Grant"
+            name="Start a grant Round"
             onFinish={submitGrant}
           >
             <Form.Item
@@ -108,6 +111,28 @@ export default function ({
                 value={payeeAddress}
                 onChange={setPayeeAddress}
               />
+            </Form.Item>
+            <Form.Item
+              label="matchingToken"
+              name="matchingToken">
+              <AddressInput
+                autoFocus
+                ensProvider={mainnetProvider}
+                placeholder="matchingToken"
+                value={matchingTokenAddress}
+                onChange={setMatchingTokenAddress}
+              />
+            </Form.Item>
+            <Form.Item
+              label="startTime"
+              name="startTime"
+              >
+                <InputNumber onChange={setStartTime}/>
+            </Form.Item>
+            <Form.Item
+              label="endTime"
+              name="endTime">
+                <InputNumber onChange={setEndTime}/>
             </Form.Item>
             <Form.Item
               name="createGrant">

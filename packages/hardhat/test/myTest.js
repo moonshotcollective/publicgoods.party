@@ -6,8 +6,6 @@ use(solidity);
 
 describe("General Grant Tests", function () {
   let grantRegistry;
-  let donationToken;
-  let mockToken;
   let grantRound;
 
   // quick fix to let gas reporter fetch data from gas station & coinmarketcap
@@ -19,44 +17,24 @@ describe("General Grant Tests", function () {
     it("Should deploy contracts", async function () {
       const GrantRegistry = await ethers.getContractFactory("GrantRegistry");
       grantRegistry = await GrantRegistry.deploy();
-      const DonationToken = await ethers.getContractFactory("DonationToken");
-      donationToken = await DonationToken.deploy(ethers.utils.parseEther("1.5"));
-      const MockToken = await ethers.getContractFactory("MockToken");
-      mockToken = await MockToken.deploy(ethers.utils.parseEther("1.5"));
       const GrantRound = await ethers.getContractFactory("GrantRound");
       grantRound = await GrantRound.deploy(
-        // meta admin address
-        "0x807a1752402D21400D555e1CD7f175566088b955",
-        // payout admin address
-        "0x807a1752402D21400D555e1CD7f175566088b955",
         // Grant Registry Address
         grantRegistry.address,
-        // Donation Token
-        donationToken.address,
-        // Mock Token
-        mockToken.address,
-        //start time EPOCH
-        16400185890,
-        //end time EPOCH
-        16500185900,
-        //metadata pointer
-        metaPtr = {
-          protocol: 1,
-          pointer: "QmTQMgoxDRj8gfNn5Cvznt5CoEE6cz9MQeZrQsNb36BMdm",
-        }
+        // Donation Token (GTC Address)
+        '0xDe30da39c46104798bB5aA3fe8B9e0e1F348163F',
+        // Weth address
+        '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+        // factory address
+        '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+        // weth address
+        '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
       );
 
     });
 
   });
 
-  describe("Deployer should have all tokens", function () {
-    it("should transfer all tokens to deployer", async function (){
-      const [addr1] = await ethers.getSigners();
-      expect(await mockToken.balanceOf(addr1.address)).to.equal(ethers.utils.parseEther("1.5"));
-      expect(await donationToken.balanceOf(addr1.address)).to.equal(ethers.utils.parseEther("1.5"));
-    })
-  })
 
   /*
   describe("setPurpose()", function () {

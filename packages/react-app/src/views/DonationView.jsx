@@ -1,18 +1,20 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { Button, Input, Form, Row, Col, List, Card, Descriptions } from "antd";
-import { ethers } from "ethers";
+import { ethers, utils } from "ethers";
 import { AlphaRouter } from "@uniswap/smart-order-router";
 import { Percent, CurrencyAmount, Token, TradeType } from "@uniswap/sdk-core";
 import { JSBI } from "@uniswap/sdk";
 import { PropertySafetyFilled } from "@ant-design/icons";
 import { ROUTERABI } from "../constants";
+import { useContractReader } from "eth-hooks";
 
-export default function DonationView({ address, mainnetProvider, signer, tx, writeContracts}) {
+export default function DonationView({ address, mainnetProvider, signer, tx, writeContracts, readContracts }) {
   //const allGrants = useContractReader(readContracts, "GrantRegistry", "getAllGrants");
   const [grantID, setGrantID] = useState("...");
   const [donationToken, setDonationToken] = useState("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48");
   const [donationAmount, setDonationAmount] = useState("1");
+  const grantRegistryAddress = readContracts.GrantRegistry ? readContracts.GrantRegistry.address : "loading";
   const router = new AlphaRouter({ chainId: 1, provider: mainnetProvider });
 
   const WETH = new Token(1, "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2", 18, "WETH", "Wrapped Ether");
@@ -21,23 +23,34 @@ export default function DonationView({ address, mainnetProvider, signer, tx, wri
 
   const GTC = new Token(1, donationToken, 18, "GTC", "GITCOIN");
 
-  const _amount = CurrencyAmount.fromRawAmount(USDC, JSBI.BigInt(50 * 10 ** 6));
+  const grantRoundManagerAddress = readContracts.GrantRoundManager ? readContracts.GrantRoundManager.address : "";
+
+  const _amount = CurrencyAmount.fromRawAmount(GTC, JSBI.BigInt(50 * 10 ** 6));
 
   const swapConfig = { recipient: address, slippageTolerance: new Percent(5, 100) /*, deadline: 1000*/ };
 
+
   async function donateToGrant() {
-    const result = await router.route(_amount, WETH, TradeType.EXACT_INPUT, swapConfig);
-    console.log(result);
-    const txParams = {
-      data: result.methodParameters.calldata,
-      to: "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45",
-      value: ethers.BigNumber.from(result.methodParameters.value),
-      from: address,
-      gasPrice: ethers.BigNumber.from(result.gasPriceWei),
-    };
-    console.log(txParams);
-    await tx(writeContracts.USDC.approve("0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45", 50*10**6));
-    await tx(signer.sendTransaction(txParams));
+    const route = await router.route(_amount, USDC, TradeType.EXACT_INPUT, swapConfig);
+    const donation = {
+      grantID: grantID,
+      token: donationToken,
+      ratio: JSBI.BigInt(1e18),
+      rounds: []
+    }
+    console.log(route);
+    //await tx(writeContracts.USDC.approve(grantRoundManagerAddress, 50*10**6));
+    //await tx(writeContracts.GrantRoundManager.donate([route], 16400185890, [donation]));
+
+    //  const txParams = {
+    //    data: result.methodParameters.calldata,
+    //    to: "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45",
+    //    value: ethers.BigNumber.from(result.methodParameters.value),
+    //    from: address,
+    //    gasPrice: ethers.BigNumber.from(result.gasPriceWei),
+    //  };
+    //await tx(signer.sendTransaction(txParams));
+    //await tx(writeContracts.WETH.approve(grantRoundAddress, JSBI.BigInt(100*10**18)));
   }
 
   return (

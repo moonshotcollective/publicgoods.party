@@ -31,7 +31,7 @@ import externalContracts from "./contracts/external_contracts";
 import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
 import { useStaticJsonRPC } from "./hooks";
-import { DonationView, DetailedGrantView, ExampleUI, GrantUI, Hints, Home, Subgraph } from "./views";
+import { DonationView, DetailedGrantView, ExampleUI, GrantUI, Hints, Home, Subgraph, GrantRoundCreator } from "./views";
 
 const { ethers } = require("ethers");
 const axios = require("axios");
@@ -262,6 +262,9 @@ function App(props) {
         <Menu.Item key="/donation">
           <Link to="/donation">Donate to a Grant</Link>
         </Menu.Item>
+        <Menu.Item key="/round">
+          <Link to="/round">Start a grant round</Link>
+        </Menu.Item>
         <Menu.Item key="/debug">
           <Link to="/debug">Debug Contracts</Link>
         </Menu.Item>
@@ -279,11 +282,15 @@ function App(props) {
           <DonationView
             tx={tx}
             address={address}
-            signer={userSigner}
             localProvider={localProvider}
             mainnetProvider={mainnetProvider}
+            signer={userSigner}
             writeContracts={writeContracts}
+            readContracts={readContracts}
           />
+        </Route>
+        <Route path="/round">
+          <GrantRoundCreator text2display={"Hello World!"} tx={tx} writeContracts={writeContracts} />
         </Route>
         <Route exact path="/debug">
           {/*
@@ -303,27 +310,7 @@ function App(props) {
             chainId={localChainId}
           />
           <Contract
-            name="MockToken"
-            price={price}
-            signer={userSigner}
-            provider={localProvider}
-            address={address}
-            blockExplorer={blockExplorer}
-            contractConfig={contractConfig}
-            chainId={localChainId}
-          />
-          <Contract
-            name="DonationToken"
-            price={price}
-            signer={userSigner}
-            provider={localProvider}
-            address={address}
-            blockExplorer={blockExplorer}
-            contractConfig={contractConfig}
-            chainId={localChainId}
-          />
-          <Contract
-            name="ROUTER"
+            name="GrantRoundManager"
             price={price}
             signer={userSigner}
             provider={localProvider}

@@ -35,69 +35,18 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     log: true,
   });
 
-  // I think that weth needs to be imported from mainnet
-  /*
-  const Weth = await deploy("Weth", {
-    // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
-    from: deployer,
-     args: [ ethers.utils.parseEther("1.5") ],
-    log: true,
-  });
-  */
-
-  const MockToken = await deploy("MockToken", {
-    // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
-    from: deployer,
-     args: [ ethers.utils.parseEther("1.5") ],
-    log: true,
-  });
-
-  const DonationToken = await deploy("DonationToken", {
-    // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
-    from: deployer,
-     args: [ ethers.utils.parseEther("1.5") ],
-    log: true,
-  });
-
-  await deploy("GrantRound", {
-    // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
-    from: deployer,
-     args: [
-       // meta admin address
-       "0x807a1752402D21400D555e1CD7f175566088b955",
-       // payout admin address
-       "0x807a1752402D21400D555e1CD7f175566088b955",
-       // Grant Registry Address
-        GrantRegistry.address,
-       // Donation Token
-        DonationToken.address,
-       // Mock Token
-        MockToken.address,
-        //start time EPOCH
-        16400185890,
-        //end time EPOCH
-        16400185900,
-        //metadata pointer
-        metaPtr = {
-        protocol: 1,
-        pointer: "QmTQMgoxDRj8gfNn5Cvznt5CoEE6cz9MQeZrQsNb36BMdm",
-      },
-    ],
-    log: true,
-  });
-
   await deploy("GrantRoundManager", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
-     args: [
-         //Registry Address
-         GrantRegistry.address,
-         //Donation Token
-         DonationToken.address,
-         //Factory Address
-         "0x1F98431c8aD98523631AE4a59f267346ea31F984",
-         //Weth Address
-         "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+    args: [
+      //Registry Address
+      GrantRegistry.address,
+      //Donation Token
+      "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+      //Factory Address
+      "0x1F98431c8aD98523631AE4a59f267346ea31F984",
+      //Weth Address
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
     ],
     log: true,
   });
