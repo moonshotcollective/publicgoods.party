@@ -35,21 +35,22 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     log: true,
   });
 
-  await deploy("GrantRoundManager", {
-    // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
-    from: deployer,
-    args: [
-      //Registry Address
-      GrantRegistry.address,
-      //Donation Token
-      "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-      //Factory Address
-      "0x1F98431c8aD98523631AE4a59f267346ea31F984",
-      //Weth Address
-      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
-    ],
-    log: true,
-  });
+  // THIS IS FOR THE LOCALHOST DEPLOY
+   await deploy("GrantRoundManager", {
+     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
+     from: deployer,
+     args: [
+       //Registry Address
+       GrantRegistry.address,
+       //Donation Token
+       "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+       //Factory Address
+       "0x1F98431c8aD98523631AE4a59f267346ea31F984",
+       //Weth Address
+       "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+     ],
+     log: true,
+   });
 
   /*
   await deploy("MerkleGrantRoundPayout", {
@@ -99,14 +100,14 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
 
   // Verify your contracts with Etherscan
   // You don't want to verify on localhost
-  if (chainId !== localChainId) {
-    // wait for etherscan to be ready to verify
-    await sleep(15000);
-    await run("verify:verify", {
-      address: YourContract.address,
-      contract: "contracts/YourContract.sol:YourContract",
-      contractArguments: [],
-    });
-  }
+  // if (chainId !== localChainId) {
+  //   // wait for etherscan to be ready to verify
+  //   await sleep(15000);
+  //   await run("verify:verify", {
+  //     address: YourContract.address,
+  //     contract: "contracts/YourContract.sol:YourContract",
+  //     contractArguments: [],
+  //   });
+  // }
 };
 module.exports.tags = ["YourContract"];

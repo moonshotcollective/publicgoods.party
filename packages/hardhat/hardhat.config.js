@@ -64,13 +64,19 @@ module.exports = {
   // Follow the directions, and uncomment the network you wish to deploy to.
 
   networks: {
-    localhost: {
-      url: "http://localhost:8545",
-      /*      
-        notice no mnemonic here? it will just use account 0 of the hardhat node to deploy
-        (you can put in a mnemonic here to set the deployer locally)
-      
-      */
+    // localhost: {
+    //   url: "http://127.0.0.1:8545",
+    //   /*
+    //     notice no mnemonic here? it will just use account 0 of the hardhat node to deploy
+    //     (you can put in a mnemonic here to set the deployer locally)
+
+    //   */
+    // },
+    hardhat: {
+      forking: {
+          url: "https://eth-mainnet.alchemyapi.io/v2/zmWcqT_0Bp4WdnWqPiZaTafia_TEyn5q",
+          blockNumber: 14216636
+      },
     },
 
     // rinkeby: {
@@ -100,7 +106,7 @@ module.exports = {
     // },
 
     rinkeby: {
-      url: "https://rinkeby.infura.io/v3/d0bf96c03a064b3eaaeab7f77983d43c", // <---- YOUR INFURA ID! (or it won't work)
+      url: "https://rinkeby.infura.io/v3/0x835bfF2b03207d74510338A57f45131a46f5cB8b", // <---- YOUR INFURA ID! (or it won't work)
 
       //    url: "https://speedy-nodes-nyc.moralis.io/XXXXXXXXXXXXXXXXXXXXXXX/eth/rinkeby", // <---- YOUR MORALIS ID! (not limited to infura)
 
@@ -313,7 +319,7 @@ module.exports = {
     },
   },
   etherscan: {
-    apiKey: "DNXJA8RX2Q3VZ4URQIWP7Z68CJXQZSC6AW",
+    apiKey: "KDHMCWMT1RQRRNQC89J8HCEWUYEUYDBYBF",
   },
 };
 
@@ -367,20 +373,20 @@ task("fundedwallet", "Create a wallet (pk) link and fund it with deployer?")
       deployerWallet = deployerWallet.connect(ethers.provider);
       console.log(
         "💵 Sending " +
-          amount +
-          " ETH to " +
-          randomWallet.address +
-          " using deployer account"
+        amount +
+        " ETH to " +
+        randomWallet.address +
+        " using deployer account"
       );
       const sendresult = await deployerWallet.sendTransaction(tx);
       console.log("\n" + url + "/pk#" + privateKey + "\n");
     } else {
       console.log(
         "💵 Sending " +
-          amount +
-          " ETH to " +
-          randomWallet.address +
-          " using local node"
+        amount +
+        " ETH to " +
+        randomWallet.address +
+        " using local node"
       );
       console.log("\n" + url + "/pk#" + privateKey + "\n");
       return send(ethers.provider.getSigner(), tx);
@@ -410,8 +416,8 @@ task(
       "0x" + EthUtil.privateToAddress(wallet._privKey).toString("hex");
     console.log(
       "🔐 Account Generated as " +
-        address +
-        " and set as mnemonic in packages/hardhat"
+      address +
+      " and set as mnemonic in packages/hardhat"
     );
     console.log(
       "💬 Use 'yarn run account' to get more information about the deployment account."
@@ -470,12 +476,12 @@ task(
 
     console.log(
       "⛏  Account Mined as " +
-        address +
-        " and set as mnemonic in packages/hardhat"
+      address +
+      " and set as mnemonic in packages/hardhat"
     );
     console.log(
       "📜 This will create the first contract: " +
-        chalk.magenta("0x" + contract_address)
+      chalk.magenta("0x" + contract_address)
     );
     console.log(
       "💬 Use 'yarn run account' to get more information about the deployment account."

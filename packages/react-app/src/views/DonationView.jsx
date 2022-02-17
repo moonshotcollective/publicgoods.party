@@ -29,16 +29,20 @@ export default function DonationView({ address, mainnetProvider, signer, tx, wri
 
   const swapConfig = { recipient: address, slippageTolerance: new Percent(5, 100) /*, deadline: 1000*/ };
 
+  console.log(WETH);
+  console.log(USDC);
 
-  async function donateToGrant() {
-    const route = await router.route(_amount, USDC, TradeType.EXACT_INPUT, swapConfig);
-    const donation = {
-      grantID: grantID,
-      token: donationToken,
-      ratio: JSBI.BigInt(1e18),
-      rounds: []
-    }
+
+  async function donateToGrant(USDC) {
+    const route = await router.route(_amount, WETH, TradeType.EXACT_INPUT, swapConfig);
     console.log(route);
+    // const donation = {
+    //   grantID: grantID,
+    //   token: donationToken,
+    //   ratio: JSBI.BigInt(1e18),
+    //   rounds: []
+    // }
+    // console.log(route);
     //await tx(writeContracts.USDC.approve(grantRoundManagerAddress, 50*10**6));
     //await tx(writeContracts.GrantRoundManager.donate([route], 16400185890, [donation]));
 
@@ -59,7 +63,7 @@ export default function DonationView({ address, mainnetProvider, signer, tx, wri
       <br />
       <Row justify="center">
         <Col lg={8} sm={16}>
-          <Form name="Donate to a grant" onFinish={donateToGrant}>
+          <Form name="Donate to a grant" onFinish={donateToGrant(USDC)}>
             <Form.Item label="GrantID" name="GrantID">
               <Input
                 onChange={e => {

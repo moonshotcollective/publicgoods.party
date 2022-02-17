@@ -63,7 +63,7 @@ const NETWORKCHECK = true;
 
 const web3Modal = Web3ModalSetup();
 
-// 🛰 providers
+// 🛰providers
 const providers = [
   //"https://eth-mainnet.gateway.pokt.network/v1/lb/611156b4a585a20035148406",
   `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_KEY}`,
