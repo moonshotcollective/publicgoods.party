@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "./SwapRouter.sol";
 import "./GrantRegistry.sol";
 import "./GrantRound.sol";
+import "hardhat/console.sol";
 
 contract GrantRoundManager is SwapRouter {
   // --- Libraries ---
@@ -124,8 +125,11 @@ contract GrantRoundManager is SwapRouter {
   ) external payable {
     // Main logic
     _validateDonations(_donations);
+    console.log('Donations validated!');
     _executeDonationSwaps(_swaps, _deadline);
+    console.log('Swapped done!');
     _transferDonations(_donations);
+    console.log('Donations Transfered!');
 
     // Clear storage for refunds (this is set in _executeDonationSwaps)
     for (uint256 i = 0; i < _swaps.length; i++) {
@@ -152,6 +156,7 @@ contract GrantRoundManager is SwapRouter {
 
       // Used later to validate ratios are correctly provided
       donationRatios[_donations[i].token] = donationRatios[_donations[i].token].add(_donations[i].ratio);
+      
 
       // Validate round parameters
       GrantRound[] calldata _rounds = _donations[i].rounds;
@@ -174,11 +179,15 @@ contract GrantRoundManager is SwapRouter {
   function _executeDonationSwaps(SwapSummary[] calldata _swaps, uint256 _deadline) internal {
     for (uint256 i = 0; i < _swaps.length; i++) {
       // Validate output token is donation token
-      IERC20 _outputToken = IERC20(_swaps[i].path.toAddress(_swaps[i].path.length - 20));
+      //IERC20 _outputToken = IERC20(_swaps[i].path.toAddress(_swaps[i].path.length - 20));
+
+      // @dev for the autorouter we are going to fetch the output a bit different
+      IERC20 _outputToken = IERC20(_swaps[i].path.toAddress(48));
       require(_outputToken == donationToken, "GrantRoundManager: Output token must match donation token");
 
       // Validate ratios sum to 100%
-      IERC20 _tokenIn = IERC20(_swaps[i].path.toAddress(0));
+      //@dev again the bytes are encoded a bit different for the autorouter
+      IERC20 _tokenIn = IERC20(_swaps[i].path.toAddress(16));
       require(donationRatios[_tokenIn] == WAD, "GrantRoundManager: Ratios do not sum to 100%");
       require(swapOutputs[_tokenIn] == 0, "GrantRoundManager: Swap parameter has duplicate input tokens");
 

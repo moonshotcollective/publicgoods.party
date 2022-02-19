@@ -8,7 +8,7 @@ const { AlphaRouter, SwapRouterProvider } = require('@uniswap/smart-order-router
 const { CurrencyAmount, Token, TradeType } = require("@uniswap/sdk-core");
 const { JSBI, Percent } = require("@uniswap/sdk");
 const { BigNumber } = require("ethers");
-const { parseUnits } = require("ethers/lib/utils");
+const { parseUnits, AbiCoder, FormatTypes } = require("ethers/lib/utils");
 const { EtherscanProvider } = require("@ethersproject/providers");
 
 use(solidity);
@@ -83,14 +83,19 @@ describe("General Grant Tests", function () {
       });
       const blindnabler = await ethers.getSigner('0x807a1752402D21400D555e1CD7f175566088b955');
 
-      await grantRoundManager.connect(blindnabler).createGrantRound(blindnabler.address, blindnabler.address, '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', 1645115005, 1645125005, testTuple);
+      await network.provider.send("evm_setNextBlockTimestamp", [1645299450])
+      await network.provider.send("evm_mine")
+      await grantRoundManager.connect(blindnabler).createGrantRound(blindnabler.address, blindnabler.address, '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', 1645299460, 1649150057, testTuple);
       const roundAddress = await grantRoundManager.queryFilter('GrantRoundCreated');
-      grantRound = await ethers.getContractAt('GrantRound', roundAddress[0].address, addr1);
-      expect(await grantRound.address).to.exist;
+      grantRound = await ethers.getContractAt('GrantRound', await roundAddress[0].args[0]);
+      await network.provider.send("evm_setNextBlockTimestamp", [1645299470])
+      await network.provider.send("evm_mine")
+      expect(await grantRound["isActive()"]()).to.equal(true);
     });
 
     it("Should allow a user to make a donation to a grant", async function () {
       // impersonating myself
+      const [addr1] = await ethers.getSigners()
       await hre.network.provider.request({
         method: "hardhat_impersonateAccount",
         params: ["0x807a1752402D21400D555e1CD7f175566088b955"],
@@ -107,31 +112,26 @@ describe("General Grant Tests", function () {
       ]
       const gtc = await ethers.getContractAt(erc20abi, '0xDe30da39c46104798bB5aA3fe8B9e0e1F348163F', blindnabler);
       await gtc.approve(grantRoundManager.address, ethers.utils.parseEther('50'));
-      //await gtc.approve("0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45", ethers.utils.parseEther('50'));
       const GTC = new Token(1, "0xDe30da39c46104798bB5aA3fe8B9e0e1F348163F", 18, "GTC", "Gitcoin");
       const WETH = new Token(1, "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", 18, "WETH", "Wrapped Ether");
-      const USDC = new Token(1, "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", 6, "USDC", "USD//C");
       const _amount = CurrencyAmount.fromRawAmount(GTC, JSBI.BigInt(50 * 10 ** 18));
       const swapConfig = { recipient: grantRoundManager.address, slippageTolerance: new Percent(5, 100) };
       // spits out a route from a donation in USDC to WETH. Grant round from above has USDC as it's matching token, but WETH as the grantRoundManager Donation Token.
       const route = await router.route(_amount, WETH, TradeType.EXACT_INPUT, swapConfig);
-      const donation = {
-        grantID: 0,
-        token: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
-        ratio: parseUnits('1', '18'),
+      const _donations = {
+        grantId: 0,
+        token: gtc.address,
+        ratio: await ethers.utils.parseEther('1'),
         rounds: [grantRound.address]
       }
-      const swapSummary = {
+      const _swaps = {
         amountIn: await ethers.utils.parseEther(_amount.toExact()),
         amountOutMin: await ethers.utils.parseEther(route.quote.toExact()),
         path: route.methodParameters.calldata
       }
-      const overrides = {
-        gasLimit: route.estimatedGasUsed,
-        gasPrice: '69',
-        value: ethers.utils.parseEther("0"),
-      }
-      await grantRoundManager.connect(blindnabler).donate([swapSummary], 18000000, [donation])
+      console.log(route.methodParameters.calldata)
+      await grantRoundManager.connect(blindnabler).donate([_swaps], 18000000000, [_donations])
+
     });
 
   });

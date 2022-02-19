@@ -17,6 +17,7 @@ import "@uniswap/v3-periphery/contracts/libraries/PoolAddress.sol";
 import "@uniswap/v3-periphery/contracts/libraries/CallbackValidation.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/external/IWETH9.sol";
 
+import 'hardhat/console.sol';
 /**
  * @title Uniswap V3 Swap Router
  * @notice Router for stateless execution of swaps against Uniswap V3
@@ -104,6 +105,7 @@ contract SwapRouter is
 
     bool zeroForOne = tokenIn < tokenOut;
 
+    console.log(tokenIn, tokenOut);
     (int256 amount0, int256 amount1) = getPool(tokenIn, tokenOut, fee).swap(
       recipient,
       zeroForOne,

@@ -121,7 +121,7 @@ contract GrantRound {
   /**
    * @notice Returns true if the round is active, false otherwise
    */
-  function isActive() public view returns (bool) {
+  function isActive() external view returns (bool) {
     return block.timestamp >= startTime && block.timestamp < endTime;
   }
 }
