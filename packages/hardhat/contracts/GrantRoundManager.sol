@@ -4,12 +4,13 @@ pragma abicoder v2;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
-import "./SwapRouter.sol";
+//import "./SwapRouter.sol";
+import "./SwapRouter02.sol";
 import "./GrantRegistry.sol";
 import "./GrantRound.sol";
 import "hardhat/console.sol";
 
-contract GrantRoundManager is SwapRouter {
+contract GrantRoundManager is SwapRouter02 {
   // --- Libraries ---
   using Address for address;
   using BytesLib for bytes;
@@ -65,9 +66,11 @@ contract GrantRoundManager is SwapRouter {
   constructor(
     GrantRegistry _registry,
     IERC20 _donationToken,
-    address _factory,
+    address _factoryV2,
+    address _factoryV3,
+    address _positionManager,
     address _weth
-  ) SwapRouter(_factory, _weth) {
+  ) SwapRouter02(_factoryV2, _factoryV3, _positionManager, _weth) {
     // Validation
     require(_registry.grantCount() >= 0, "GrantRoundManager: Invalid registry");
     require(_donationToken.totalSupply() > 0, "GrantRoundManager: Invalid token");
@@ -182,12 +185,14 @@ contract GrantRoundManager is SwapRouter {
       //IERC20 _outputToken = IERC20(_swaps[i].path.toAddress(_swaps[i].path.length - 20));
 
       // @dev for the autorouter we are going to fetch the output a bit different
-      IERC20 _outputToken = IERC20(_swaps[i].path.toAddress(48));
+      IERC20 _outputToken = IERC20(_swaps[i].path.toAddress(_swaps[i].path.length - 20));
+      console.log(address(_outputToken));
       require(_outputToken == donationToken, "GrantRoundManager: Output token must match donation token");
 
       // Validate ratios sum to 100%
       //@dev again the bytes are encoded a bit different for the autorouter
-      IERC20 _tokenIn = IERC20(_swaps[i].path.toAddress(16));
+      IERC20 _tokenIn = IERC20(_swaps[i].path.toAddress(_swaps[i].path.length - 52));
+      console.log(address(_tokenIn));
       require(donationRatios[_tokenIn] == WAD, "GrantRoundManager: Ratios do not sum to 100%");
       require(swapOutputs[_tokenIn] == 0, "GrantRoundManager: Swap parameter has duplicate input tokens");
 
@@ -198,14 +203,14 @@ contract GrantRoundManager is SwapRouter {
       }
 
       // Otherwise, execute swap
-      ExactInputParams memory params = ExactInputParams(
-        _swaps[i].path,
-        address(this), // send output to the contract and it will be transferred later
-        _deadline,
-        _swaps[i].amountIn,
-        _swaps[i].amountOutMin
-      );
-      swapOutputs[_tokenIn] = exactInput(params); // save off output amount for later
+      // ExactInputParams memory params = ExactInputParams(
+      //   _swaps[i].path,
+      //   address(this), // send output to the contract and it will be transferred later
+      //   _deadline,
+      //   _swaps[i].amountIn,
+      //   _swaps[i].amountOutMin
+      // );
+      // swapOutputs[_tokenIn] = exactInput(params); // save off output amount for later
     }
   }
 

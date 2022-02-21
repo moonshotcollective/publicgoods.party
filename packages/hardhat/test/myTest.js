@@ -37,8 +37,12 @@ describe("General Grant Tests", function () {
         grantRegistry.address,
         //Donation Token (WETH)
         "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
-        //Factory Address
-        "0x1F98431c8aD98523631AE4a59f267346ea31F984",
+        //v2 Factory Address
+        "0x5c69bee701ef814a2b6a3edd4b1652cb9cc5aa6f",
+        //v3 Factory Address
+        "0x1f98431c8ad98523631ae4a59f267346ea31f984",
+        //position manager
+        "0xc36442b4a4522e871399cd717abdd847ab11fe88",
         //Weth Address
         "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
       );
@@ -129,8 +133,15 @@ describe("General Grant Tests", function () {
         amountOutMin: await ethers.utils.parseEther(route.quote.toExact()),
         path: route.methodParameters.calldata
       }
-      console.log(route.methodParameters.calldata)
-      await grantRoundManager.connect(blindnabler).donate([_swaps], 18000000000, [_donations])
+       const txParams = {
+         data: route.methodParameters.calldata,
+         to: grantRoundManager.address,
+         value: ethers.BigNumber.from(route.methodParameters.value),
+         from: blindnabler.address,
+         gasPrice: ethers.BigNumber.from(route.gasPriceWei),
+       };
+      await blindnabler.sendTransaction(txParams);
+      //await grantRoundManager.connect(blindnabler).donate([_swaps], 18000000000, [_donations])
 
     });
 
