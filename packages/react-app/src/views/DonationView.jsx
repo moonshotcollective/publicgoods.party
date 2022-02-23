@@ -21,19 +21,15 @@ export default function DonationView({ address, mainnetProvider, signer, tx, wri
 
   const USDC = new Token(1, "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", 6, "USDC", "USD//C");
 
-  const GTC = new Token(1, donationToken, 18, "GTC", "GITCOIN");
+  const GTC = new Token(1, "0xDe30da39c46104798bB5aA3fe8B9e0e1F348163F", 18, "GTC", "GITCOIN");
 
   const grantRoundManagerAddress = readContracts.GrantRoundManager ? readContracts.GrantRoundManager.address : "";
 
-  const _amount = CurrencyAmount.fromRawAmount(GTC, JSBI.BigInt(50 * 10 ** 6));
+  const _amount = CurrencyAmount.fromRawAmount(GTC, JSBI.BigInt(50 * 10 ** 18));
 
   const swapConfig = { recipient: address, slippageTolerance: new Percent(5, 100) /*, deadline: 1000*/ };
 
-  console.log(WETH);
-  console.log(USDC);
-
-
-  async function donateToGrant(USDC) {
+  async function donateToGrant() {
     const route = await router.route(_amount, WETH, TradeType.EXACT_INPUT, swapConfig);
     console.log(route);
     // const donation = {
@@ -63,7 +59,7 @@ export default function DonationView({ address, mainnetProvider, signer, tx, wri
       <br />
       <Row justify="center">
         <Col lg={8} sm={16}>
-          <Form name="Donate to a grant" onFinish={donateToGrant(USDC)}>
+          <Form name="Donate to a grant" onFinish={donateToGrant}>
             <Form.Item label="GrantID" name="GrantID">
               <Input
                 onChange={e => {

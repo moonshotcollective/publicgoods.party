@@ -37,12 +37,8 @@ describe("General Grant Tests", function () {
         grantRegistry.address,
         //Donation Token (WETH)
         "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
-        //v2 Factory Address
-        "0x5c69bee701ef814a2b6a3edd4b1652cb9cc5aa6f",
         //v3 Factory Address
         "0x1f98431c8ad98523631ae4a59f267346ea31f984",
-        //position manager
-        "0xc36442b4a4522e871399cd717abdd847ab11fe88",
         //Weth Address
         "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
       );
@@ -89,7 +85,7 @@ describe("General Grant Tests", function () {
 
       await network.provider.send("evm_setNextBlockTimestamp", [1645299450])
       await network.provider.send("evm_mine")
-      await grantRoundManager.connect(blindnabler).createGrantRound(blindnabler.address, blindnabler.address, '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', 1645299460, 1649150057, testTuple);
+      await grantRoundManager.connect(blindnabler).createGrantRound(blindnabler.address, addr1.address, '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', 1645299460, 1649150057, testTuple);
       const roundAddress = await grantRoundManager.queryFilter('GrantRoundCreated');
       grantRound = await ethers.getContractAt('GrantRound', await roundAddress[0].args[0]);
       await network.provider.send("evm_setNextBlockTimestamp", [1645299470])
@@ -115,34 +111,30 @@ describe("General Grant Tests", function () {
         'function balanceOf(address account) view returns (uint)'
       ]
       const gtc = await ethers.getContractAt(erc20abi, '0xDe30da39c46104798bB5aA3fe8B9e0e1F348163F', blindnabler);
-      await gtc.approve(grantRoundManager.address, ethers.utils.parseEther('50'));
+      const weth = await ethers.getContractAt(erc20abi, '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', blindnabler);
+      await gtc.approve(grantRoundManager.address, ethers.utils.parseEther('50000'));
       const GTC = new Token(1, "0xDe30da39c46104798bB5aA3fe8B9e0e1F348163F", 18, "GTC", "Gitcoin");
       const WETH = new Token(1, "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", 18, "WETH", "Wrapped Ether");
-      const _amount = CurrencyAmount.fromRawAmount(GTC, JSBI.BigInt(50 * 10 ** 18));
+      const _inputAmount = CurrencyAmount.fromRawAmount(GTC, JSBI.BigInt(50 * 10 ** 18));
       const swapConfig = { recipient: grantRoundManager.address, slippageTolerance: new Percent(5, 100) };
       // spits out a route from a donation in USDC to WETH. Grant round from above has USDC as it's matching token, but WETH as the grantRoundManager Donation Token.
-      const route = await router.route(_amount, WETH, TradeType.EXACT_INPUT, swapConfig);
+      console.log(await weth.balanceOf(addr1.address))
+      const route = await router.route(_inputAmount, WETH, TradeType.EXACT_INPUT, swapConfig);
       const _donations = {
         grantId: 0,
         token: gtc.address,
         ratio: await ethers.utils.parseEther('1'),
         rounds: [grantRound.address]
       }
-      const _swaps = {
-        amountIn: await ethers.utils.parseEther(_amount.toExact()),
-        amountOutMin: await ethers.utils.parseEther(route.quote.toExact()),
-        path: route.methodParameters.calldata
+      const swap = {
+        inputToken: "0xDe30da39c46104798bB5aA3fe8B9e0e1F348163F",
+        inputAmount: ethers.utils.parseEther('50'),
+        data: route.methodParameters.calldata,
+        value: ethers.BigNumber.from(route.methodParameters.value)
       }
-       const txParams = {
-         data: route.methodParameters.calldata,
-         to: grantRoundManager.address,
-         value: ethers.BigNumber.from(route.methodParameters.value),
-         from: blindnabler.address,
-         gasPrice: ethers.BigNumber.from(route.gasPriceWei),
-       };
-      await blindnabler.sendTransaction(txParams);
-      //await grantRoundManager.connect(blindnabler).donate([_swaps], 18000000000, [_donations])
-
+      await grantRoundManager.connect(blindnabler).donate([swap], 180000000, [_donations])
+      expect(await weth.balanceOf(addr1.address)).to.be.gt(0);
+      console.log(await weth.balanceOf(addr1.address))
     });
 
   });
