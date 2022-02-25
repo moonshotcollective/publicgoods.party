@@ -132,7 +132,7 @@ describe("General Grant Tests", function () {
         data: route.methodParameters.calldata,
         value: ethers.BigNumber.from(route.methodParameters.value)
       }
-      await grantRoundManager.connect(blindnabler).donate([swap], 180000000, [_donations])
+      await grantRoundManager.connect(blindnabler).donate([swap], [_donations])
       expect(await weth.balanceOf(addr1.address)).to.be.gt(0);
       console.log(await weth.balanceOf(addr1.address))
     });

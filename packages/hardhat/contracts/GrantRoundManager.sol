@@ -129,7 +129,7 @@ contract GrantRoundManager is SwapRouter {
         emit GrantRoundCreated(address(_grantRound));
     }
 
-    /**
+    /*
      * @notice Performs swaps if necessary and donates funds as specified
      * @param _swaps Array of SwapSummary objects describing the swaps required
      * @param _deadline Unix timestamp after which a swap will revert, i.e. swap must be executed before this
@@ -139,7 +139,6 @@ contract GrantRoundManager is SwapRouter {
      */
     function donate(
         SwapData[] calldata _swaps,
-        uint256 _deadline,
         Donation[] calldata _donations
     ) external payable {
         // Main logic
@@ -168,11 +167,7 @@ contract GrantRoundManager is SwapRouter {
 
             if (_swaps[i].inputToken != donationToken) {
 
-                _swaps[i].inputToken.safeTransferFrom(msg.sender,address(this),_swaps[i].inputAmount);
-
-                _swaps[i].inputToken.approve(swapRouter, _swaps[i].inputAmount);
-
-                (bool success, bytes memory data) = swapRouter.call{value: _swaps[i].value}(_swaps[i].data);
+                (bool success, bytes memory data) = swapRouter.delegatecall(_swaps[i].data);
 
                 require(success, "swap failed");
 
