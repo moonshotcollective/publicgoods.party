@@ -6,7 +6,7 @@ import { Address, Balance, Events, GrantCreator } from "../components";
 
 export default function GrantUI({ tx, writeContracts, mainnetProvider }) {
   return (
-    <div style={{ marginTop: 60 }}>
+    <div>
       <GrantCreator text2display={"Hello World!"} tx={tx} writeContracts={writeContracts} />
     </div>
   );

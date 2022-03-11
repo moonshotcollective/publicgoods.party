@@ -1,12 +1,12 @@
 import { React, useState } from "react";
 import { AddressInput } from "..";
-import { Form, Row, Col, Button, Input } from "antd";
+import { Typography, Form, Row, Col, Button, Input } from "antd";
 import { PINATA_API_KEY, PINATA_API_SECRET } from "../../constants";
 
 const axios = require("axios");
+const { Title, Paragraph, Text } = Typography;
 
 export default function ({
-  //inputs
   tx,
   writeContracts,
   mainnetProvider
@@ -22,11 +22,11 @@ export default function ({
     title: grantTitle,
     description: grantDescription,
     website: grantWebsite
-  }
+  };
   const testTuple = {
     protocol: 1,
     pointer: "grantHash"
-  } 
+  };
 
   function pinJSONToIPFS(pinataApiKey, pinataSecretApiKey, JSONBody) {
     const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
@@ -52,8 +52,7 @@ export default function ({
 
   return (
     <div>
-      <h1>MVP Grant Creator</h1>
-      <br />
+      <Title >MVP Grant Creator</Title>
       <Row justify="center">
         <Col lg={8} sm={16}>
           <Form

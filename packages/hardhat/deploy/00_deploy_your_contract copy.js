@@ -17,35 +17,23 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   const { deployer } = await getNamedAccounts();
   const chainId = await getChainId();
 
-  const grants = [
-    {
-      owner: "0x34f4E532a33EB545941e914B25Efe348Aea31f0A",
-      payee: "0x06c94663E5884BE4cCe85F0869e95C7712d34803",
-      metaPtr: {
-        protocol: 1,
-        pointer: "QmaHTgor7GhetW3nmev3UqabjrzbKJCe7q1v8Wfg3aZyV4",
-      }
-    }
-  ];
-
-  const GrantRegistry = await deploy("GrantRegistry", {
+  const grantregistry = await deploy("GrantRegistry", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
     // args: [ "Hello", ethers.utils.parseEther("1.5") ],
     log: true,
   });
 
-  // THIS IS FOR THE LOCALHOST DEPLOY
    await deploy("GrantRoundManager", {
      // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
      from: deployer,
      args: [
        //Registry Address
-       GrantRegistry.address,
-       //Donation Token
-       "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+       grantregistry.address,
+       //Donation Token (WETH)
+       "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
        //Factory Address
-       "0x1F98431c8aD98523631AE4a59f267346ea31F984",
+       "0x1f98431c8ad98523631ae4a59f267346ea31f984",
        //Weth Address
        "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
      ],

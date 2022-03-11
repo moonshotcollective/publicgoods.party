@@ -64,20 +64,18 @@ module.exports = {
   // Follow the directions, and uncomment the network you wish to deploy to.
 
   networks: {
-    // localhost: {
-    //   url: "http://127.0.0.1:8545",
-    //   /*
-    //     notice no mnemonic here? it will just use account 0 of the hardhat node to deploy
-    //     (you can put in a mnemonic here to set the deployer locally)
-
-    //   */
-    // },
-    hardhat: {
-      forking: {
-          url: "https://eth-mainnet.alchemyapi.io/v2/zmWcqT_0Bp4WdnWqPiZaTafia_TEyn5q",
-          blockNumber: 14216636
-      },
+    localhost: {
+      url: "http://127.0.0.1:8545",
     },
+
+    // Uncomment the hardhat network for unit tests
+
+    // hardhat: {
+    //   forking: {
+    //       url: "https://eth-mainnet.alchemyapi.io/v2/zmWcqT_0Bp4WdnWqPiZaTafia_TEyn5q",
+    //       blockNumber: 14276642
+    //   },
+    // },
 
     // rinkeby: {
     //   url: `https://rinkeby.infura.io/v3/${process.env.RINKEBY_INFURA_KEY}`,

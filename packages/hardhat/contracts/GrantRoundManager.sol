@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+
 pragma solidity ^0.7.6;
 pragma abicoder v2;
 
@@ -20,8 +21,7 @@ contract GrantRoundManager is SwapRouter {
     /// @notice Address of the GrantRegistry
     GrantRegistry public immutable registry;
 
-    address public immutable swapRouter =
-        0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45;
+    address public immutable swapRouter = 0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45;
 
     /// @notice Address of the ERC20 token in which donations are made
     IERC20 public immutable donationToken;
@@ -47,7 +47,6 @@ contract GrantRoundManager is SwapRouter {
         IERC20 inputToken;
         uint256 inputAmount;
         bytes data;
-        uint256 value;
     }
 
     /// @dev Donation inputs and Uniswap V3 swap inputs: https://docs.uniswap.org/protocol/guides/swaps/multihop-swaps
@@ -78,7 +77,7 @@ contract GrantRoundManager is SwapRouter {
         address _factory,
         address _weth
     ) SwapRouter(_factory, _weth) {
-        // Validation
+        Validation
         require(
             _registry.grantCount() >= 0,
             "GrantRoundManager: Invalid registry"
@@ -143,13 +142,10 @@ contract GrantRoundManager is SwapRouter {
     ) external payable {
         // Main logic
         _validateDonations(_donations);
-        console.log("Donations validated!");
         _routerSwap(_swaps);
-        console.log("Swaps done!");
         _transferDonations(_donations);
-        console.log("Donations Transfered!");
 
-        // Clear storage for refunds (this is set in _executeDonationSwaps)
+        // Clear storage for refunds (this is set in _routerSwap)
         for (uint256 i = 0; i < _swaps.length; i++) {
             IERC20 _tokenIn = IERC20(_swaps[i].inputToken);
             swapOutputs[_tokenIn] = 0;
@@ -160,6 +156,12 @@ contract GrantRoundManager is SwapRouter {
         }
     }
 
+    /**
+     @notice this function contains the logic for swapping an input token for the donation token
+     @dev The reason we use delegatecall here is to send the transaction from the autorouter within the donate function call itself. Otherwise we risk having issues with certain parts of the tx failing and just a lot of issues. And because with the autorouter, swaps can be rather complex, the calldata is going to be changing each time.
+     @param _swaps, array of SwapData struct, containing IERC20 inputToken, uint inputAmount, and bytes data. The bytes data corresponds to the
+    calldata generated from the autorouter in the front end.
+    */
     function _routerSwap(SwapData[] memory _swaps) internal {
         for (uint256 i = 0; i < _swaps.length; i++) {
             require(swapOutputs[_swaps[i].inputToken] == 0,"GrantRoundManager: Swap parameter has duplicate input tokens");

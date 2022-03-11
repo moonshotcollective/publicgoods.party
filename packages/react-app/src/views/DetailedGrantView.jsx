@@ -1,11 +1,13 @@
 import React from "react";
 import { useEffect } from "react";
-import { List, Card, Descriptions } from "antd";
+import { Typography, List, Card, Descriptions } from "antd";
 import { useContractReader } from "eth-hooks";
 import { Address } from "../components";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useState } from "react";
+
+const { Title, Paragraph, Text } = Typography;
 
 /**
  * web3 props can be passed from '../App.jsx' into your local view component for use
@@ -28,11 +30,9 @@ function DetailedGrantView({/* mainnetProvider, readContracts, blockExplorer */}
   }, []);
   return (
     <div>
-      <h1>Grant Title: {post.title}</h1>
-      <br />
-      <h1>Grant Description: {post.description}</h1>
-      <br />
-      <h1>Grant Website: <a href={"https://"+post.website}>{post.website}</a></h1>
+      <Title >Grant Title: {post.title}</Title>
+      <Title >Grant Description: {post.description}</Title>
+      <Title >Grant Website: <a href={"https://"+post.website}>{post.website}</a></Title>
     </div>
   );
 }

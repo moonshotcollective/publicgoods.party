@@ -55,7 +55,7 @@ const axios = require("axios");
 */
 
 /// 📡 What chain are your contracts deployed to?
-const targetNetwork = NETWORKS.localhost; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
+const targetNetwork = NETWORKS.rinkeby; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 
 // 😬 Sorry for all the console logging
 const DEBUG = true;
@@ -67,13 +67,13 @@ const web3Modal = Web3ModalSetup();
 const providers = [
   //"https://eth-mainnet.gateway.pokt.network/v1/lb/611156b4a585a20035148406",
   `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_KEY}`,
-  "https://rpc.scaffoldeth.io:48544",
+  //"https://rpc.scaffoldeth.io:48544",
 ];
 
 function App(props) {
   // specify all the chains your app is available on. Eg: ['localhost', 'mainnet', ...otherNetworks ]
   // reference './constants.js' for other networks
-  const networkOptions = ["localhost", "mainnet", "rinkeby"];
+  const networkOptions = [/*"localhost", "mainnet",*/ "rinkeby"];
 
   const [injectedProvider, setInjectedProvider] = useState();
   const [address, setAddress] = useState();
@@ -86,7 +86,7 @@ function App(props) {
   // 🔭 block explorer URL
   const blockExplorer = targetNetwork.blockExplorer;
 
-  // load all your providers
+  //load all your providers
   const localProvider = useStaticJsonRPC([
     process.env.REACT_APP_PROVIDER ? process.env.REACT_APP_PROVIDER : targetNetwork.rpcUrl,
   ]);

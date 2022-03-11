@@ -1,9 +1,10 @@
 import { React, useState } from "react";
 import { AddressInput } from "..";
-import { Form, Row, Col, Button, Input, InputNumber } from "antd";
+import { Typography, Form, Row, Col, Button, Input, InputNumber } from "antd";
 import { PINATA_API_KEY, PINATA_API_SECRET } from "../../constants";
 
 const axios = require("axios");
+const { Title, Paragraph, Text } = Typography;
 
 export default function ({
   tx,
@@ -55,7 +56,7 @@ export default function ({
 
   return (
     <div>
-      <h1>Grant Round Creator</h1>
+      <Title >Grant Round Creator</Title>
       <br />
       <Row justify="center">
         <Col lg={8} sm={16}>
