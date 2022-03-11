@@ -17,19 +17,21 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   const { deployer } = await getNamedAccounts();
   const chainId = await getChainId();
 
-  const grantregistry = await deploy("GrantRegistry", {
+  const grantRegistry = await deploy("GrantRegistry", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
-    // args: [ "Hello", ethers.utils.parseEther("1.5") ],
+    // args: [],
     log: true,
+    //waitConfirmations: 5,
   });
 
-   await deploy("GrantRoundManager", {
+  /*
+   const grantRoundManager = await deploy("GrantRoundManager", {
      // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
      from: deployer,
      args: [
        //Registry Address
-       grantregistry.address,
+       grantRegistry.address,
        //Donation Token (WETH)
        "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
        //Factory Address
@@ -39,6 +41,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
      ],
      log: true,
    });
+   */
 
   /*
   await deploy("MerkleGrantRoundPayout", {
@@ -88,14 +91,31 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
 
   // Verify your contracts with Etherscan
   // You don't want to verify on localhost
-  // if (chainId !== localChainId) {
-  //   // wait for etherscan to be ready to verify
-  //   await sleep(15000);
-  //   await run("verify:verify", {
-  //     address: YourContract.address,
-  //     contract: "contracts/YourContract.sol:YourContract",
-  //     contractArguments: [],
-  //   });
-  // }
+  /*
+  if (chainId !== localChainId) {
+    // wait for etherscan to be ready to verify
+    await sleep(15000);
+    await run("verify:verify", {
+      address: grantRegistry.address,
+      contract: "contracts/GrantRegistry.sol:GrantRegistry",
+      contractArguments: [],
+    });
+    await sleep(15000);
+    await run("verify:verify", {
+      address: grantRoundManager.address,
+      contract: "contracts/GrantRoundManager.sol:GrantRoundManager",
+      contractArguments: [
+        //Registry Address
+        GrantRegistry.address,
+        //Donation Token (WETH)
+        "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+        //Factory Address
+        "0x1f98431c8ad98523631ae4a59f267346ea31f984",
+        //Weth Address
+        "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+      ],
+    });
+  }
+  */
 };
 module.exports.tags = ["YourContract"];

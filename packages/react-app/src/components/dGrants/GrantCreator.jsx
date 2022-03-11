@@ -52,7 +52,7 @@ export default function ({
 
   return (
     <div>
-      <Title >MVP Grant Creator</Title>
+      <Title >Grant Publisher</Title>
       <Row justify="center">
         <Col lg={8} sm={16}>
           <Form
@@ -69,20 +69,20 @@ export default function ({
               />
             </Form.Item>
             <Form.Item
-              label="Description"
-              name="Description">
-              <Input
-                onChange={e => {
-                  setGrantDescription(e.target.value);
-                }}
-              />
-            </Form.Item>
-            <Form.Item
               label="Website"
               name="Website">
               <Input
                 onChange={e => {
                   setGrantWebsite(e.target.value);
+                }}
+              />
+            </Form.Item>
+            <Form.Item
+              label="Description"
+              name="Description">
+              <Input.TextArea
+                onChange={e => {
+                  setGrantDescription(e.target.value);
                 }}
               />
             </Form.Item>

@@ -244,7 +244,6 @@ function App(props) {
 
   return (
     <div className="App">
-      {/* ✏️ Edit the header and change the title to your project name */}
       <Header />
       <NetworkDisplay
         NETWORKCHECK={NETWORKCHECK}
@@ -254,16 +253,16 @@ function App(props) {
       />
       <Menu style={{ textAlign: "center" }} selectedKeys={[location.pathname]} mode="horizontal">
         <Menu.Item key="/">
-          <Link to="/">All grants</Link>
+          <Link to="/">Grant Explorer</Link>
         </Menu.Item>
         <Menu.Item key="/grantUI">
-          <Link to="/grantUI">Create Grant</Link>
+          <Link to="/grantUI">Grant Publisher</Link>
+        </Menu.Item>
+        <Menu.Item key="/round">
+          <Link to="/round">Grant Round Manager</Link>
         </Menu.Item>
         <Menu.Item key="/donation">
           <Link to="/donation">Donate to a Grant</Link>
-        </Menu.Item>
-        <Menu.Item key="/round">
-          <Link to="/round">Start a grant round</Link>
         </Menu.Item>
         <Menu.Item key="/debug">
           <Link to="/debug">Debug Contracts</Link>
@@ -272,11 +271,16 @@ function App(props) {
 
       <Switch>
         <Route exact path="/">
-          {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
           <Home yourLocalBalance={yourLocalBalance} readContracts={readContracts} />
         </Route>
         <Route path="/grant/:metaPtr">
           <DetailedGrantView />
+        </Route>
+        <Route path="/grantui">
+          <GrantUI tx={tx} writeContracts={writeContracts} mainnetProvider={mainnetProvider} />
+        </Route>
+        <Route path="/round">
+          <GrantRoundCreator text2display={"Hello World!"} tx={tx} writeContracts={writeContracts} mainnetProvider={mainnetProvider}/>
         </Route>
         <Route path="/donation">
           <DonationView
@@ -289,16 +293,7 @@ function App(props) {
             readContracts={readContracts}
           />
         </Route>
-        <Route path="/round">
-          <GrantRoundCreator text2display={"Hello World!"} tx={tx} writeContracts={writeContracts} />
-        </Route>
         <Route exact path="/debug">
-          {/*
-                🎛 this scaffolding is full of commonly used components
-                this <Contract/> component will automatically parse your ABI
-                and give you a form to interact with it locally
-            */}
-
           <Contract
             name="GrantRegistry"
             price={price}
@@ -319,9 +314,6 @@ function App(props) {
             contractConfig={contractConfig}
             chainId={localChainId}
           />
-        </Route>
-        <Route path="/grantui">
-          <GrantUI tx={tx} writeContracts={writeContracts} mainnetProvider={mainnetProvider} />
         </Route>
       </Switch>
 

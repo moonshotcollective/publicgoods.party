@@ -1,10 +1,11 @@
 import { React, useState } from "react";
 import { AddressInput } from "..";
-import { Typography, Form, Row, Col, Button, Input, InputNumber } from "antd";
+import { DatePicker, Typography, Form, Row, Col, Button, Input, InputNumber } from "antd";
 import { PINATA_API_KEY, PINATA_API_SECRET } from "../../constants";
 
 const axios = require("axios");
 const { Title, Paragraph, Text } = Typography;
+const { RangePicker } = DatePicker;
 
 export default function ({
   tx,
@@ -18,10 +19,8 @@ export default function ({
   const [ownerAddress, setOwnerAddress] = useState("...");
   const [payeeAddress, setPayeeAddress] = useState("...");
   const [matchingTokenAddress, setMatchingTokenAddress] = useState("0xDe30da39c46104798bB5aA3fe8B9e0e1F348163F");
-  const [startTime, setStartTime] = useState("...");
-  const [endTime, setEndTime] = useState("...");
+  const [roundTimes, setRoundTimes] = useState([]);
 
-  // I am not 100% sure if this is the correct metadata structure for the grant round but oh well
   const grantObject = {
     title: grantTitle,
     description: grantDescription,
@@ -54,10 +53,15 @@ export default function ({
     await pinJSONToIPFS(PINATA_API_KEY, PINATA_API_SECRET, grantObject);
   }
 
+  async function onChange(value, dateString) {
+    const parsedTimes = [Math.floor(new Date(value[0]._d).getTime() / 1000),Math.floor(new Date(value[1]._d).getTime() / 1000)];
+    console.log('Selected Time: ', parsedTimes);
+    setRoundTimes(parsedTimes);
+  }
+
   return (
     <div>
-      <Title >Grant Round Creator</Title>
-      <br />
+      <Title >Grant Round Manager</Title>
       <Row justify="center">
         <Col lg={8} sm={16}>
           <Form
@@ -74,20 +78,20 @@ export default function ({
               />
             </Form.Item>
             <Form.Item
-              label="Description"
-              name="Description">
-              <Input
-                onChange={e => {
-                  setGrantDescription(e.target.value);
-                }}
-              />
-            </Form.Item>
-            <Form.Item
               label="Website"
               name="Website">
               <Input
                 onChange={e => {
                   setGrantWebsite(e.target.value);
+                }}
+              />
+            </Form.Item>
+            <Form.Item
+              label="Description"
+              name="Description">
+              <Input.TextArea
+                onChange={e => {
+                  setGrantDescription(e.target.value);
                 }}
               />
             </Form.Item>
@@ -125,15 +129,13 @@ export default function ({
               />
             </Form.Item>
             <Form.Item
-              label="startTime"
-              name="startTime"
+              label="Start / Stop of Round"
               >
-                <InputNumber onChange={setStartTime}/>
-            </Form.Item>
-            <Form.Item
-              label="endTime"
-              name="endTime">
-                <InputNumber onChange={setEndTime}/>
+              <RangePicker
+                showTime={{ format: 'HH:mm' }}
+                format="YYYY-MM-DD HH:mm"
+                onChange={onChange}
+              />
             </Form.Item>
             <Form.Item
               name="createGrant">

@@ -104,7 +104,7 @@ module.exports = {
     // },
 
     rinkeby: {
-      url: "https://rinkeby.infura.io/v3/0x835bfF2b03207d74510338A57f45131a46f5cB8b", // <---- YOUR INFURA ID! (or it won't work)
+      url: "https://rinkeby.infura.io/v3/b34e8cabbc174222951996ba0f93ea86", // <---- YOUR INFURA ID! (or it won't work)
 
       //    url: "https://speedy-nodes-nyc.moralis.io/XXXXXXXXXXXXXXXXXXXXXXX/eth/rinkeby", // <---- YOUR MORALIS ID! (not limited to infura)
 

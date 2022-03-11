@@ -77,15 +77,9 @@ contract GrantRoundManager is SwapRouter {
         address _factory,
         address _weth
     ) SwapRouter(_factory, _weth) {
-        Validation
-        require(
-            _registry.grantCount() >= 0,
-            "GrantRoundManager: Invalid registry"
-        );
-        require(
-            _donationToken.totalSupply() > 0,
-            "GrantRoundManager: Invalid token"
-        );
+        //Validation
+        require(_registry.grantCount() >= 0,"GrantRoundManager: Invalid registry");
+        require(_donationToken.totalSupply() > 0,"GrantRoundManager: Invalid token");
 
         // Set state
         registry = _registry;
@@ -110,10 +104,7 @@ contract GrantRoundManager is SwapRouter {
         uint256 _endTime,
         MetaPtr calldata _metaPtr
     ) external {
-        require(
-            _matchingToken.totalSupply() > 0,
-            "GrantRoundManager: Invalid matching token"
-        );
+        require(_matchingToken.totalSupply() > 0,"GrantRoundManager: Invalid matching token");
         GrantRound _grantRound = new GrantRound(
             _owner,
             _payoutAdmin,
@@ -190,10 +181,7 @@ contract GrantRoundManager is SwapRouter {
 
         for (uint256 i = 0; i < _donations.length; i++) {
             // Validate grant exists
-            require(
-                _donations[i].grantId < registry.grantCount(),
-                "GrantRoundManager: Grant does not exist in registry"
-            );
+            require(_donations[i].grantId < registry.grantCount(),"GrantRoundManager: Grant does not exist in registry");
 
             // Used later to validate ratios are correctly provided
             donationRatios[_donations[i].token] = donationRatios[
@@ -203,18 +191,9 @@ contract GrantRoundManager is SwapRouter {
             // Validate round parameters
             GrantRound[] calldata _rounds = _donations[i].rounds;
             for (uint256 j = 0; j < _rounds.length; j++) {
-                require(
-                    _rounds[j].isActive(),
-                    "GrantRoundManager: GrantRound is not active"
-                );
-                require(
-                    _rounds[j].registry() == registry,
-                    "GrantRoundManager: Round-Registry mismatch"
-                );
-                require(
-                    donationToken == _rounds[j].donationToken(),
-                    "GrantRoundManager: GrantRound's donation token does not match GrantRoundManager's donation token"
-                );
+                require(_rounds[j].isActive(),"GrantRoundManager: GrantRound is not active");
+                require(_rounds[j].registry() == registry,"GrantRoundManager: Round-Registry mismatch");
+                require(donationToken == _rounds[j].donationToken(),"GrantRoundManager: GrantRound's donation token does not match GrantRoundManager's donation token");
             }
         }
     }
@@ -229,14 +208,8 @@ contract GrantRoundManager is SwapRouter {
             GrantRound[] calldata _rounds = _donations[i].rounds;
             uint96 _grantId = _donations[i].grantId;
             IERC20 _tokenIn = _donations[i].token;
-            uint256 _donationAmount = (
-                swapOutputs[_tokenIn].mul(_donations[i].ratio)
-            ) / WAD;
-            require(
-                _donationAmount > 0,
-                "GrantRoundManager: Donation amount must be greater than zero"
-            ); // verifies that swap and donation inputs are consistent
-
+            uint256 _donationAmount = (swapOutputs[_tokenIn].mul(_donations[i].ratio)) / WAD;
+            require(_donationAmount > 0,"GrantRoundManager: Donation amount must be greater than zero");
             // Execute transfer
             emit GrantDonation(
                 _grantId,

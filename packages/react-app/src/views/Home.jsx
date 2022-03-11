@@ -1,9 +1,11 @@
 import React from "react";
-import { List, Card, Descriptions } from "antd";
+import { Typography, List, Card, Descriptions } from "antd";
 import { Link} from "react-router-dom";
 import { useContractReader } from "eth-hooks";
 import { Address } from "../components";
 import { DetailedGrantView, NameViewer } from "./";
+
+const { Title } = Typography;
 
 /**
  * web3 props can be passed from '../App.jsx' into your local view component for use
@@ -14,7 +16,8 @@ import { DetailedGrantView, NameViewer } from "./";
 function Home({ mainnetProvider, readContracts, blockExplorer }) {
   const allGrants = useContractReader(readContracts, "GrantRegistry", "getAllGrants");
   return (
-    <div style={{ marginTop: 60 }}>
+    <div>
+      <Title >Grant Explorer</Title>
       <List
         className="w-full"
         grid={{ gutter: 16, column: 3 }}
@@ -37,9 +40,6 @@ function Home({ mainnetProvider, readContracts, blockExplorer }) {
                     }}
                   >
                     <div style={{ fontSize: "1rem", fontWeight: 500 }}>
-                      {/*
-                        THE NAME HERE NEEDS TO BE PULLED FROM IPFS INTO AN OBJECT.
-                      */}
                       <Link to={`/grant/${item.metaPtr.pointer}`}><NameViewer metaPtr={item.metaPtr.pointer}/><NameViewer /></Link>
                     </div>
                     {/* <Address

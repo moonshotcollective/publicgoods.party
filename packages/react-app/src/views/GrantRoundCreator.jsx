@@ -7,7 +7,7 @@ import { Address, Balance, Events, GrantRoundCreator } from "../components";
 export default function GrantUI({ tx, writeContracts, mainnetProvider }) {
   return (
     <div>
-      <GrantRoundCreator text2display={"Hello World!"} tx={tx} writeContracts={writeContracts} />
+      <GrantRoundCreator text2display={"Hello World!"} tx={tx} writeContracts={writeContracts} mainnetProvider={mainnetProvider}/>
     </div>
   );
 }
