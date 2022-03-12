@@ -14,36 +14,43 @@ const { Title } = Typography;
 export default function DonationView({ address, mainnetProvider, signer, tx, writeContracts, readContracts }) {
   //const allGrants = useContractReader(readContracts, "GrantRegistry", "getAllGrants");
   const [grantID, setGrantID] = useState("...");
-  const [inputToken, setInputToken] = useState("0xDe30da39c46104798bB5aA3fe8B9e0e1F348163F");
+  const [inputToken, setInputToken] = useState("0xc778417E063141139Fce010982780140Aa0cD5Ab");
   const [donationAmount, setDonationAmount] = useState("1");
-  const grantRegistryAddress = readContracts.GrantRegistry ? readContracts.GrantRegistry.address : "loading";
-  const router = new AlphaRouter({ chainId: 1, provider: mainnetProvider });
+  const router = new AlphaRouter({ chainId: 4, provider: mainnetProvider });
 
+  const grantRegistryAddress = readContracts.GrantRegistry ? readContracts.GrantRegistry.address : "loading";
   const grantRoundManagerAddress = readContracts.GrantRoundManager ? readContracts.GrantRoundManager.address : "loading";
 
-  const outputToken = readContracts.GrantRoundManager ? readContracts.GrantRoundManager.donationToken : "loading";
+  const outputToken = useContractReader(readContracts, "GrantRoundManager", "donationToken");
+
 
   async function donateToGrant() {
-    const swapInput = new Token(1, inputToken, 18, "GTC", "GITCOIN");
-    const swapOutput = new Token(1, outputToken, 18, "WETH", "Wrapped Ether");
+    const swapInput = new Token(4, inputToken, 18, "GTC", "GITCOIN");
+    const swapOutput = new Token(4, outputToken, 18, "WETH", "Wrapped Ether");
     const _amount = CurrencyAmount.fromRawAmount(swapInput, ethers.utils.parseEther(donationAmount));
+    console.log(grantRoundManagerAddress);
     const swapConfig = { recipient: grantRoundManagerAddress, slippageTolerance: new Percent(5, 100) };
     const route = await router.route(_amount, swapOutput, TradeType.EXACT_INPUT, swapConfig);
+    //console.log( route);
+    /*
     const _donations = {
       grantId: grantID,
       token: inputToken,
       ratio: ethers.utils.parseEther('1'),
-      rounds: [grantRound.address]
+      rounds: ['0xd0d6cDaf1D176f6b2596a04bF83772fa002807a7']
     };
     const swap = {
       inputToken: inputToken,
       inputAmount: ethers.utils.parseEther(donationAmount),
       data: route.methodParameters.calldata,
     };
-    const erc20abi = ['function approve(address spender, uint rawAmount) external returns (bool)'];
-    const approveToken = await ethers.getContractAt(erc20abi, inputToken, signer);
-    await tx(approveToken.approve(grantRoundManagerAddress, ethers.utils.parseEther(donationAmount)));
-    await tx(writeContracts.GrantRoundManager.donate([swap], [_donations]));
+    */
+    //const erc20abi = ['function approve(address spender, uint rawAmount) external returns (bool)'];
+    //const approveToken = await ethers.getContractAt(erc20abi, inputToken, signer);
+    //console.log(await route);
+    //console.log('Output token: ', outputToken);
+    //await tx(approveToken.approve(grantRoundManagerAddress, ethers.utils.parseEther(donationAmount)));
+    //await tx(writeContracts.GrantRoundManager.donate([swap], [_donations]));
   }
 
   return (
@@ -62,7 +69,7 @@ export default function DonationView({ address, mainnetProvider, signer, tx, wri
             <Form.Item label="Donation Token" name="Donation Token">
               <Input
                 onChange={e => {
-                  setDonationToken(e.target.value);
+                  setInputToken(e.target.value);
                 }}
               />
             </Form.Item>

@@ -1,5 +1,5 @@
 import { React, useState } from "react";
-import { AddressInput } from "..";
+import { AddressInput, Events } from "..";
 import { DatePicker, Typography, Form, Row, Col, Button, Input, InputNumber } from "antd";
 import { PINATA_API_KEY, PINATA_API_SECRET } from "../../constants";
 
@@ -10,7 +10,9 @@ const { RangePicker } = DatePicker;
 export default function ({
   tx,
   writeContracts,
-  mainnetProvider
+  mainnetProvider,
+  readContracts,
+  localProvider
 }) {
   const [grantTitle, setGrantTitle] = useState("...");
   const [grantDescription, setGrantDescription] = useState("...");
@@ -25,11 +27,11 @@ export default function ({
     title: grantTitle,
     description: grantDescription,
     website: grantWebsite
-  }
+  };
   const testTuple = {
     protocol: 1,
     pointer: "grantHash"
-  } 
+  };
 
   function pinJSONToIPFS(pinataApiKey, pinataSecretApiKey, JSONBody) {
     const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
@@ -42,7 +44,7 @@ export default function ({
       })
       .then(function (response) {
         testTuple.pointer = response.data.IpfsHash;
-        tx(writeContracts.GrantRoundManager.createGrantRound(ownerAddress, payeeAddress, matchingTokenAddress, startTime, endTime, testTuple));
+        tx(writeContracts.GrantRoundManager.createGrantRound(ownerAddress, payeeAddress, matchingTokenAddress, roundTimes[0], roundTimes[1], testTuple));
       })
       .catch(function (error) {
         console.log(error);
@@ -146,6 +148,14 @@ export default function ({
           </Form>
         </Col>
       </Row>
+      <Events
+        contracts={readContracts}
+        contractName="GrantRoundManager"
+        eventName="GrantRoundCreated"
+        localProvider={localProvider}
+        mainnetProvider={mainnetProvider}
+        startBlock={1}
+      />
     </div>
   );
 }

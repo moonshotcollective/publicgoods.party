@@ -17,6 +17,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   const { deployer } = await getNamedAccounts();
   const chainId = await getChainId();
 
+  /*
   const grantRegistry = await deploy("GrantRegistry", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
@@ -25,13 +26,32 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     //waitConfirmations: 5,
   });
 
+  */
+
+
+  // Args are for the rinkeby deploy NOT mainnet
+  const grantRoundManager = await deploy("GrantRoundManager", {
+    // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
+    from: deployer,
+    args: [
+      //Registry Address
+      "0x11f1c43bBA0642392d8F304f23798A8A98Ac65CF",
+      //Donation Token (WETH)
+      "0xc778417E063141139Fce010982780140Aa0cD5Ab",
+      //Factory Address
+      "0x1f98431c8ad98523631ae4a59f267346ea31f984",
+      //Weth Address
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+    ],
+    log: true,
+  });
   /*
    const grantRoundManager = await deploy("GrantRoundManager", {
      // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
      from: deployer,
      args: [
        //Registry Address
-       grantRegistry.address,
+       ,
        //Donation Token (WETH)
        "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
        //Factory Address

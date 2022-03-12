@@ -280,7 +280,7 @@ function App(props) {
           <GrantUI tx={tx} writeContracts={writeContracts} mainnetProvider={mainnetProvider} />
         </Route>
         <Route path="/round">
-          <GrantRoundCreator text2display={"Hello World!"} tx={tx} writeContracts={writeContracts} mainnetProvider={mainnetProvider}/>
+          <GrantRoundCreator text2display={"Hello World!"} tx={tx} writeContracts={writeContracts} mainnetProvider={mainnetProvider} readContracts={readContracts} localProvider={localProvider}/>
         </Route>
         <Route path="/donation">
           <DonationView

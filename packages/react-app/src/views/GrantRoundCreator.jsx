@@ -4,10 +4,10 @@ import { Button, Card, DatePicker, Divider, Input, Progress, Slider, Spin, Switc
 import React, { useState } from "react";
 import { Address, Balance, Events, GrantRoundCreator } from "../components";
 
-export default function GrantUI({ tx, writeContracts, mainnetProvider }) {
+export default function GrantUI({ tx, writeContracts, mainnetProvider, localProvider, readContracts}) {
   return (
     <div>
-      <GrantRoundCreator text2display={"Hello World!"} tx={tx} writeContracts={writeContracts} mainnetProvider={mainnetProvider}/>
+      <GrantRoundCreator text2display={"Hello World!"} tx={tx} writeContracts={writeContracts} mainnetProvider={mainnetProvider} readContracts={readContracts} localProvider={localProvider} />
     </div>
   );
 }
