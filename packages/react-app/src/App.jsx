@@ -3,9 +3,7 @@ import "antd/dist/antd.css";
 import {
   useBalance,
   useContractLoader,
-  useContractReader,
   useGasPrice,
-  useOnBlock,
   useUserProviderAndSigner,
 } from "eth-hooks";
 import { useExchangeEthPrice } from "eth-hooks/dapps/dex";
@@ -24,41 +22,21 @@ import {
   Ramp,
   ThemeSwitch,
 } from "./components";
-import DonationComp from "./components/DonationComp";
 import { ALCHEMY_KEY, NETWORKS } from "./constants";
 import externalContracts from "./contracts/external_contracts";
 // contracts
 import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
 import { useStaticJsonRPC } from "./hooks";
-import { DonationView, DetailedGrantView, ExampleUI, GrantUI, Hints, Home, Subgraph, GrantRoundCreator } from "./views";
+import { DonationView, DetailedGrantView, GrantCreator , Home, GrantRoundCreator } from "./views";
 
 const { ethers } = require("ethers");
-const axios = require("axios");
-/*
-    Welcome to 🏗 scaffold-eth !
-
-    Code:
-    https://github.com/scaffold-eth/scaffold-eth
-
-    Support:
-    https://t.me/joinchat/KByvmRe5wkR-8F_zz6AjpA
-    or DM @austingriffith on twitter or telegram
-
-    You should get your own Alchemy.com & Infura.io ID and put it in `constants.js`
-    (this is your connection to the main Ethereum network for ENS etc.)
-
-
-    🌏 EXTERNAL CONTRACTS:
-    You can also bring in contract artifacts in `constants.js`
-    (and then use the `useExternalContractLoader()` hook!)
-*/
 
 /// 📡 What chain are your contracts deployed to?
 const targetNetwork = NETWORKS.rinkeby; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 
 // 😬 Sorry for all the console logging
-const DEBUG = true;
+const DEBUG = false;
 const NETWORKCHECK = true;
 
 const web3Modal = Web3ModalSetup();
@@ -71,8 +49,6 @@ const providers = [
 ];
 
 function App(props) {
-  // specify all the chains your app is available on. Eg: ['localhost', 'mainnet', ...otherNetworks ]
-  // reference './constants.js' for other networks
   const networkOptions = [/*"localhost", "mainnet",*/ "rinkeby"];
 
   const [injectedProvider, setInjectedProvider] = useState();
@@ -131,8 +107,6 @@ function App(props) {
   const selectedChainId =
     userSigner && userSigner.provider && userSigner.provider._network && userSigner.provider._network.chainId;
 
-  // For more hooks, check out 🔗eth-hooks at: https://www.npmjs.com/package/eth-hooks
-
   // The transactor wraps transactions and provides notificiations
   const tx = Transactor(userSigner, gasPrice);
 
@@ -152,29 +126,8 @@ function App(props) {
   // If you want to make 🔐 write transactions to your contracts, use the userSigner:
   const writeContracts = useContractLoader(userSigner, contractConfig, localChainId);
 
-  // EXTERNAL CONTRACT EXAMPLE:
-  //
   // If you want to bring in the mainnet DAI contract it would look like:
   const mainnetContracts = useContractLoader(mainnetProvider, contractConfig);
-
-  // If you want to call a function on a new block
-  useOnBlock(mainnetProvider, () => {
-    console.log(`⛓ A new mainnet block is here: ${mainnetProvider._lastBlockNumber}`);
-  });
-
-  // Then read your DAI balance like:
-   const myMainnetDAIBalance = useContractReader(mainnetContracts, "DAI", "balanceOf", [
-     "0x34aA3F359A9D614239015126635CE7732c18fDF3",
-  ]);
-
-  // keep track of a variable from the contract in the local React state:
-  const purpose = useContractReader(readContracts, "YourContract", "purpose");
-
-  /*
-  const addressFromENS = useResolveName(mainnetProvider, "austingriffith.eth");
-  console.log("🏷 Resolved austingriffith.eth as:",addressFromENS)
-  */
-
   //
   // 🧫 DEBUG 👨🏻‍🔬
   //
@@ -277,10 +230,10 @@ function App(props) {
           <DetailedGrantView />
         </Route>
         <Route path="/grantui">
-          <GrantUI tx={tx} writeContracts={writeContracts} mainnetProvider={mainnetProvider} />
+          <GrantCreator tx={tx} writeContracts={writeContracts} mainnetProvider={mainnetProvider} />
         </Route>
         <Route path="/round">
-          <GrantRoundCreator text2display={"Hello World!"} tx={tx} writeContracts={writeContracts} mainnetProvider={mainnetProvider} readContracts={readContracts} localProvider={localProvider}/>
+          <GrantRoundCreator  tx={tx} writeContracts={writeContracts} mainnetProvider={mainnetProvider} readContracts={readContracts} localProvider={localProvider}/>
         </Route>
         <Route path="/donation">
           <DonationView

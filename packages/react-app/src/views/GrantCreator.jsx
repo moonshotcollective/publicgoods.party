@@ -1,12 +1,12 @@
 import { React, useState } from "react";
-import { AddressInput } from "..";
+import { AddressInput } from "../components";
 import { Typography, Form, Row, Col, Button, Input } from "antd";
-import { PINATA_API_KEY, PINATA_API_SECRET } from "../../constants";
+import { PINATA_API_KEY, PINATA_API_SECRET } from "../constants";
 
 const axios = require("axios");
-const { Title, Paragraph, Text } = Typography;
+const { Title } = Typography;
 
-export default function ({
+export default function GrantCreator ({
   tx,
   writeContracts,
   mainnetProvider
@@ -14,7 +14,6 @@ export default function ({
   const [grantTitle, setGrantTitle] = useState("...");
   const [grantDescription, setGrantDescription] = useState("...");
   const [grantWebsite, setGrantWebsite] = useState("...");
-  const [grantHash, setGrantHash] = useState("...");
   const [ownerAddress, setOwnerAddress] = useState("...");
   const [payeeAddress, setPayeeAddress] = useState("...");
 

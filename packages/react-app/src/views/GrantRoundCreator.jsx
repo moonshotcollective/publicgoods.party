@@ -1,13 +1,150 @@
-import { SyncOutlined } from "@ant-design/icons";
-import { utils } from "ethers";
-import { Button, Card, DatePicker, Divider, Input, Progress, Slider, Spin, Switch } from "antd";
-import React, { useState } from "react";
-import { Address, Balance, Events, GrantRoundCreator } from "../components";
+import { React, useState } from "react";
+import { AddressInput, Events } from "../components";
+import { DatePicker, Typography, Form, Row, Col, Button, Input, Space } from "antd";
+import { PINATA_API_KEY, PINATA_API_SECRET } from "../constants";
 
-export default function GrantUI({ tx, writeContracts, mainnetProvider, localProvider, readContracts}) {
+const axios = require("axios");
+const { Title } = Typography;
+const { RangePicker } = DatePicker;
+
+export default function GrantRoundCreator ({
+  tx,
+  writeContracts,
+  mainnetProvider,
+  readContracts,
+  localProvider
+}) {
+  const [grantTitle, setGrantTitle] = useState();
+  const [grantDescription, setGrantDescription] = useState();
+  const [grantWebsite, setGrantWebsite] = useState();
+  const [ownerAddress, setOwnerAddress] = useState();
+  const [payeeAddress, setPayeeAddress] = useState();
+  const [matchingTokenAddress, setMatchingTokenAddress] = useState();
+  const [roundTimes, setRoundTimes] = useState([]);
+
+  const grantObject = {
+    title: grantTitle,
+    description: grantDescription,
+    website: grantWebsite
+  };
+  const testTuple = {
+    protocol: 1,
+    pointer: "grantHash"
+  };
+
+  async function pinJSONToIPFS(pinataApiKey, pinataSecretApiKey, JSONBody) {
+    const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
+    return axios
+      .post(url, JSONBody, {
+        headers: {
+          pinata_api_key: pinataApiKey,
+          pinata_secret_api_key: pinataSecretApiKey
+        }
+      })
+      .then(function (response) {
+        testTuple.pointer = response.data.IpfsHash;
+        tx(writeContracts.GrantRoundManager.createGrantRound(ownerAddress, payeeAddress, matchingTokenAddress, roundTimes[0], roundTimes[1], testTuple));
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
+  async function submitGrant() {
+    await pinJSONToIPFS(PINATA_API_KEY, PINATA_API_SECRET, grantObject);
+  }
+
+  function onChange(value) {
+    const parsedTimes = [Math.floor(new Date(value[0]._d).getTime() / 1000), Math.floor(new Date(value[1]._d).getTime() / 1000)];
+    console.log('Selected Time: ', parsedTimes);
+    setRoundTimes(parsedTimes);
+  }
+
   return (
-    <div>
-      <GrantRoundCreator text2display={"Hello World!"} tx={tx} writeContracts={writeContracts} mainnetProvider={mainnetProvider} readContracts={readContracts} localProvider={localProvider} />
-    </div>
+    <Row justify="center">
+      <Col lg={8} sm={16}>
+      <Title >Grant Round Manager</Title>
+        <Form
+          name="Start a grant Round"
+          onFinish={submitGrant}
+        >
+          <Space direction="vertical">
+            <Form.Item>
+              <Input
+                placeholder="Title"
+                onChange={e => {
+                  setGrantTitle(e.target.value);
+                }}
+              />
+            </Form.Item>
+            <Form.Item>
+              <Input
+                placeholder="Website"
+                onChange={e => {
+                  setGrantWebsite(e.target.value);
+                }}
+              />
+            </Form.Item>
+            <Form.Item>
+              <Input.TextArea
+                placeholder="Description"
+                onChange={e => {
+                  setGrantDescription(e.target.value);
+                }}
+              />
+            </Form.Item>
+            <Form.Item>
+              <AddressInput
+                autoFocus
+                ensProvider={mainnetProvider}
+                placeholder="Round Owner Address"
+                value={ownerAddress}
+                onChange={setOwnerAddress}
+              />
+            </Form.Item>
+            <Form.Item>
+              <AddressInput
+                autoFocus
+                ensProvider={mainnetProvider}
+                placeholder="Round Payee Address"
+                value={payeeAddress}
+                onChange={setPayeeAddress}
+              />
+            </Form.Item>
+            <Form.Item>
+              <AddressInput
+                autoFocus
+                ensProvider={mainnetProvider}
+                placeholder="Donation Matching Token"
+                value={matchingTokenAddress}
+                onChange={setMatchingTokenAddress}
+              />
+            </Form.Item>
+            <Form.Item>
+              <RangePicker
+                showTime={{ format: 'HH:mm' }}
+                format="YYYY-MM-DD HH:mm"
+                onChange={onChange}
+              />
+            </Form.Item>
+            <Form.Item
+              name="createGrant">
+              <Button type="primary" htmlType="submit">
+                Create Grant
+              </Button>
+            </Form.Item>
+          </Space>
+        </Form>
+        <Events
+          title={"Other Grant Rounds Made:"}
+          contracts={readContracts}
+          contractName="GrantRoundManager"
+          eventName="GrantRoundCreated"
+          localProvider={localProvider}
+          mainnetProvider={mainnetProvider}
+          startBlock={1}
+        />
+      </Col>
+    </Row>
   );
 }

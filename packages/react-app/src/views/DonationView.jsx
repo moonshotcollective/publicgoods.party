@@ -1,16 +1,18 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { Typography, Button, Input, Form, Row, Col, List, Card, Descriptions, Space } from "antd";
+import { Typography, Button, Input, Form, Row, Col, Space } from "antd";
 import { ethers } from "ethers";
 import { useContractReader } from "eth-hooks";
 
 const axios = require('axios');
 const { Title } = Typography;
 
-export default function DonationView({ address, mainnetProvider, signer, tx, writeContracts, readContracts }) {
-  const [grantID, setGrantID] = useState("...");
+export default function DonationView({ address, signer, tx, writeContracts, readContracts }) {
+  const [grantID, setGrantID] = useState();
+  // TODO: Change this token to be empty after I am done testing
   const [inputToken, setInputToken] = useState("0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984");
-  const [donationAmount, setDonationAmount] = useState("1");
+  const [donationAmount, setDonationAmount] = useState();
+  const [matchingRound, setMatchingRound] = useState();
   const [isLoading, setIsLoading] = useState(true);
 
   // api endpoint
@@ -20,8 +22,9 @@ export default function DonationView({ address, mainnetProvider, signer, tx, wri
   const outputToken = useContractReader(readContracts, "GrantRoundManager", "donationToken");
 
   async function axiosTest() {
+    //Grey out the button during this whole process to avoid confusion
     setIsLoading(true);
-    // quoute object used for fetching optimal route for swap
+    // quote object used for fetching optimal route for swap
     const quote = {
       tokenInAddress: inputToken,
       tokenInChainId: 4,
@@ -48,27 +51,31 @@ export default function DonationView({ address, mainnetProvider, signer, tx, wri
     }
 
     // Sample Donations Object
+    // Ratio should change once I have implimented multiple donations at once
     const donations = {
-      grantId: 1,
+      grantId: grantID,
       token: quote.tokenInAddress,
       ratio: ethers.utils.parseEther('1'),
-      rounds: ['0xd0d6cDaf1D176f6b2596a04bF83772fa002807a7']
+      rounds: [matchingRound]
     };
 
     // Sample Swap Object. Data field is equal to zero if no swap is needed
     const swap = {
-      inputToken: '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984',
-      inputAmount: await ethers.utils.parseEther(donationAmount),
+      inputToken: inputToken,
+      inputAmount: ethers.utils.parseEther(donationAmount),
       data: response != 0 ? response.data.methodParameters.calldata : response,
       value: response != 0 ? response.data.methodParameters.value : response
     };
 
     // These two lines create a contract instance to approve tokens for swap
-    const erc20abi = ['function approve(address spender, uint rawAmount) external returns (bool)', 'function allowance(address _owner, address _spender) public view returns (uint256 remaining)'];
+    const erc20abi = [
+      'function approve(address spender, uint rawAmount) external returns (bool)', 'function allowance(address _owner, address _spender) public view returns (uint256 remaining)'
+    ];
     const approveToken = await new ethers.Contract(quote.tokenInAddress, erc20abi, signer);
 
     const allowance = await approveToken.allowance(address, grantRoundManagerAddress);
-    if (await allowance < swap.inputAmount) await tx(approveToken.approve(grantRoundManagerAddress, await ethers.utils.parseEther(donationAmount)));
+    // Only increase allowance if required
+    if (await allowance < swap.inputAmount) await tx(approveToken.approve(grantRoundManagerAddress, ethers.utils.parseEther(donationAmount)));
 
     // Submit the tx
     await tx(writeContracts.GrantRoundManager.donate([swap], [donations]));
@@ -77,15 +84,14 @@ export default function DonationView({ address, mainnetProvider, signer, tx, wri
 
   // Keep the button greyed out until all dependencies are loaded
   useEffect(() => {
-    grantRoundManagerAddress != undefined ? setIsLoading(false) : setIsLoading(true);
+    grantRoundManagerAddress != "loading" ? setIsLoading(false) : setIsLoading(true);
   }
     , outputToken);
 
   return (
-    <div>
-      <Title >Donation View</Title>
       <Row justify="center">
         <Col lg={8} sm={16}>
+          <Title >Donation View</Title>
           <Form name="Donate to a grant" onFinish={axiosTest}>
             <Space direction="vertical">
               <Form.Item>
@@ -112,6 +118,14 @@ export default function DonationView({ address, mainnetProvider, signer, tx, wri
                   }}
                 />
               </Form.Item>
+              <Form.Item>
+                <Input
+                  placeholder="Matching Round Address"
+                  onChange={e => {
+                    setMatchingRound(e.target.value);
+                  }}
+                />
+              </Form.Item>
               <Form.Item name="Submit">
                 <Button type="primary" htmlType="submit" loading={isLoading}>
                   Donate!
@@ -121,6 +135,5 @@ export default function DonationView({ address, mainnetProvider, signer, tx, wri
           </Form>
         </Col>
       </Row>
-    </div>
   );
 }
