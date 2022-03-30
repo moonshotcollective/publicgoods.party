@@ -37,11 +37,11 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
       //Registry Address
       "0x11f1c43bBA0642392d8F304f23798A8A98Ac65CF",
       //Donation Token (WETH)
-      "0xc778417E063141139Fce010982780140Aa0cD5Ab",
+      "0xc778417e063141139fce010982780140aa0cd5ab",
       //Factory Address
       "0x1f98431c8ad98523631ae4a59f267346ea31f984",
       //Weth Address
-      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+      "0xc778417e063141139fce010982780140aa0cd5ab"
     ],
     log: true,
   });

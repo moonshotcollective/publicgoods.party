@@ -1,10 +1,10 @@
 import { React, useState } from "react";
 import { AddressInput, Events } from "..";
-import { DatePicker, Typography, Form, Row, Col, Button, Input, InputNumber } from "antd";
+import { DatePicker, Typography, Form, Row, Col, Button, Input, Space } from "antd";
 import { PINATA_API_KEY, PINATA_API_SECRET } from "../../constants";
 
 const axios = require("axios");
-const { Title, Paragraph, Text } = Typography;
+const { Title, Paragraph } = Typography;
 const { RangePicker } = DatePicker;
 
 export default function ({
@@ -14,13 +14,12 @@ export default function ({
   readContracts,
   localProvider
 }) {
-  const [grantTitle, setGrantTitle] = useState("...");
-  const [grantDescription, setGrantDescription] = useState("...");
-  const [grantWebsite, setGrantWebsite] = useState("...");
-  const [grantHash, setGrantHash] = useState("...");
-  const [ownerAddress, setOwnerAddress] = useState("...");
-  const [payeeAddress, setPayeeAddress] = useState("...");
-  const [matchingTokenAddress, setMatchingTokenAddress] = useState("0xDe30da39c46104798bB5aA3fe8B9e0e1F348163F");
+  const [grantTitle, setGrantTitle] = useState();
+  const [grantDescription, setGrantDescription] = useState();
+  const [grantWebsite, setGrantWebsite] = useState();
+  const [ownerAddress, setOwnerAddress] = useState();
+  const [payeeAddress, setPayeeAddress] = useState();
+  const [matchingTokenAddress, setMatchingTokenAddress] = useState();
   const [roundTimes, setRoundTimes] = useState([]);
 
   const grantObject = {
@@ -55,8 +54,8 @@ export default function ({
     await pinJSONToIPFS(PINATA_API_KEY, PINATA_API_SECRET, grantObject);
   }
 
-  async function onChange(value, dateString) {
-    const parsedTimes = [Math.floor(new Date(value[0]._d).getTime() / 1000),Math.floor(new Date(value[1]._d).getTime() / 1000)];
+  async function onChange(value) {
+    const parsedTimes = [Math.floor(new Date(value[0]._d).getTime() / 1000), Math.floor(new Date(value[1]._d).getTime() / 1000)];
     console.log('Selected Time: ', parsedTimes);
     setRoundTimes(parsedTimes);
   }
@@ -70,85 +69,77 @@ export default function ({
             name="Start a grant Round"
             onFinish={submitGrant}
           >
-            <Form.Item
-              label="Title"
-              name="Title">
-              <Input
-                onChange={e => {
-                  setGrantTitle(e.target.value);
-                }}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Website"
-              name="Website">
-              <Input
-                onChange={e => {
-                  setGrantWebsite(e.target.value);
-                }}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Description"
-              name="Description">
-              <Input.TextArea
-                onChange={e => {
-                  setGrantDescription(e.target.value);
-                }}
-              />
-            </Form.Item>
-            <Form.Item
-              label="ownerAddress"
-              name="ownerAddress">
-              <AddressInput
-                autoFocus
-                ensProvider={mainnetProvider}
-                placeholder="Enter address"
-                value={ownerAddress}
-                onChange={setOwnerAddress}
-              />
-            </Form.Item>
-            <Form.Item
-              label="payeeAddress"
-              name="payeeAddress">
-              <AddressInput
-                autoFocus
-                ensProvider={mainnetProvider}
-                placeholder="Enter address"
-                value={payeeAddress}
-                onChange={setPayeeAddress}
-              />
-            </Form.Item>
-            <Form.Item
-              label="matchingToken"
-              name="matchingToken">
-              <AddressInput
-                autoFocus
-                ensProvider={mainnetProvider}
-                placeholder="matchingToken"
-                value={matchingTokenAddress}
-                onChange={setMatchingTokenAddress}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Start / Stop of Round"
-              >
-              <RangePicker
-                showTime={{ format: 'HH:mm' }}
-                format="YYYY-MM-DD HH:mm"
-                onChange={onChange}
-              />
-            </Form.Item>
-            <Form.Item
-              name="createGrant">
-              <Button type="primary" htmlType="submit">
-                Create Grant
-              </Button>
-            </Form.Item>
+            <Space direction="vertical">
+              <Form.Item>
+                <Input
+                  placeholder="Title"
+                  onChange={e => {
+                    setGrantTitle(e.target.value);
+                  }}
+                />
+              </Form.Item>
+              <Form.Item>
+                <Input
+                  placeholder="Website"
+                  onChange={e => {
+                    setGrantWebsite(e.target.value);
+                  }}
+                />
+              </Form.Item>
+              <Form.Item>
+                <Input.TextArea
+                  placeholder="Description"
+                  onChange={e => {
+                    setGrantDescription(e.target.value);
+                  }}
+                />
+              </Form.Item>
+              <Form.Item>
+                <AddressInput
+                  autoFocus
+                  ensProvider={mainnetProvider}
+                  placeholder="Grant Owner Address"
+                  value={ownerAddress}
+                  onChange={setOwnerAddress}
+                />
+              </Form.Item>
+              <Form.Item>
+                <AddressInput
+                  autoFocus
+                  ensProvider={mainnetProvider}
+                  placeholder="Grant Payee Address"
+                  value={payeeAddress}
+                  onChange={setPayeeAddress}
+                />
+              </Form.Item>
+              <Form.Item>
+                <AddressInput
+                  autoFocus
+                  ensProvider={mainnetProvider}
+                  placeholder="Donation Matching Token"
+                  value={matchingTokenAddress}
+                  onChange={setMatchingTokenAddress}
+                />
+              </Form.Item>
+              <Form.Item>
+                <RangePicker
+                  showTime={{ format: 'HH:mm' }}
+                  format="YYYY-MM-DD HH:mm"
+                  onChange={onChange}
+                />
+              </Form.Item>
+              <Form.Item
+                name="createGrant">
+                <Button type="primary" htmlType="submit">
+                  Create Grant
+                </Button>
+              </Form.Item>
+            </Space>
           </Form>
         </Col>
       </Row>
       <Events
+        title={"Other Grant Rounds Made:"}
         contracts={readContracts}
         contractName="GrantRoundManager"
         eventName="GrantRoundCreated"

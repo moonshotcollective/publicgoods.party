@@ -47,13 +47,14 @@ contract GrantRoundManager is SwapRouter {
         IERC20 inputToken;
         uint256 inputAmount;
         bytes data;
+        uint256 value;
     }
 
     /// @dev Donation inputs and Uniswap V3 swap inputs: https://docs.uniswap.org/protocol/guides/swaps/multihop-swaps
     struct Donation {
         uint96 grantId; // grant ID to which donation is being made
         IERC20 token; // address of the token to donate
-        uint256 ratio; // ratio of `token` to donate, specified as numerator where WAD = 1e18 = 100%
+        uint256 ratio; // ratio of `token` to donate, specified as numerator where WAD = 1e18 = 100% Useful only if multiple donations are made at once. IE 25% of tokens to grant 1, 25% to another etc.
         GrantRound[] rounds; // rounds against which the donation should be counted
     }
 
@@ -149,7 +150,7 @@ contract GrantRoundManager is SwapRouter {
 
     /**
      @notice this function contains the logic for swapping an input token for the donation token
-     @dev The reason we use delegatecall here is to send the transaction from the autorouter within the donate function call itself. Otherwise we risk having issues with certain parts of the tx failing and just a lot of issues. And because with the autorouter, swaps can be rather complex, the calldata is going to be changing each time.
+     @dev The reason we use call here is to send the transaction from the autorouter within the donate function call itself. Otherwise we risk having issues with certain parts of the tx failing and just a lot of issues. And because with the autorouter, swaps can be rather complex, the calldata is going to be changing each time.
      @param _swaps, array of SwapData struct, containing IERC20 inputToken, uint inputAmount, and bytes data. The bytes data corresponds to the
     calldata generated from the autorouter in the front end.
     */
@@ -159,12 +160,15 @@ contract GrantRoundManager is SwapRouter {
             require(donationRatios[_swaps[i].inputToken] == WAD,"GrantRoundManager: Ratios do not sum to 100%");
 
             if (_swaps[i].inputToken != donationToken) {
+                uint256 contractBalance = donationToken.balanceOf(address(this));
+                // Transfer the tokens over and approve for the router
+                _swaps[i].inputToken.safeTransferFrom(msg.sender, address(this), _swaps[i].inputAmount);
+                _swaps[i].inputToken.approve(swapRouter, _swaps[i].inputAmount);
 
-                (bool success, bytes memory data) = swapRouter.delegatecall(_swaps[i].data);
-
+                (bool success, ) = swapRouter.call{value: _swaps[i].value}(_swaps[i].data);
                 require(success, "swap failed");
-
-                swapOutputs[_swaps[i].inputToken] = abi.decode(data, (uint256));
+                contractBalance = donationToken.balanceOf(address(this)) - contractBalance;
+                swapOutputs[_swaps[i].inputToken] = contractBalance;
             } else {
                 swapOutputs[_swaps[i].inputToken] = _swaps[i].inputAmount;
             }
@@ -176,9 +180,6 @@ contract GrantRoundManager is SwapRouter {
      * @param _donations Array of donations that will be executed
      */
     function _validateDonations(Donation[] calldata _donations) internal {
-        // TODO consider moving this to the section where we already loop through donations in case that saves a lot of
-        // gas. Leaving it here for now to improve readability
-
         for (uint256 i = 0; i < _donations.length; i++) {
             // Validate grant exists
             require(_donations[i].grantId < registry.grantCount(),"GrantRoundManager: Grant does not exist in registry");
