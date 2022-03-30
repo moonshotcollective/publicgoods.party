@@ -50,10 +50,6 @@ export default function GrantRoundCreator ({
       });
   }
 
-  async function submitGrant() {
-    await pinJSONToIPFS(PINATA_API_KEY, PINATA_API_SECRET, grantObject);
-  }
-
   function onChange(value) {
     const parsedTimes = [Math.floor(new Date(value[0]._d).getTime() / 1000), Math.floor(new Date(value[1]._d).getTime() / 1000)];
     console.log('Selected Time: ', parsedTimes);
@@ -66,7 +62,7 @@ export default function GrantRoundCreator ({
       <Title >Grant Round Manager</Title>
         <Form
           name="Start a grant Round"
-          onFinish={submitGrant}
+          onFinish={async () => await pinJSONToIPFS(PINATA_API_KEY, PINATA_API_SECRET, grantObject)}
         >
           <Space direction="vertical">
             <Form.Item>

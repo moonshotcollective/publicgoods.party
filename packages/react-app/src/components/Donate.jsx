@@ -5,10 +5,8 @@ import { ethers } from "ethers";
 import { useContractReader } from "eth-hooks";
 
 const axios = require('axios');
-const { Title } = Typography;
 
-export default function DonationView({ address, signer, tx, writeContracts, readContracts, cart }) {
-  const [grantID, setGrantID] = useState();
+export default function Donate({ address, signer, tx, writeContracts, readContracts }) {
   // TODO: Change this token to be empty after I am done testing
   const [inputToken, setInputToken] = useState("0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984");
   const [donationAmount, setDonationAmount] = useState();
@@ -52,19 +50,11 @@ export default function DonationView({ address, signer, tx, writeContracts, read
 
     // Sample Donations Object
     // Ratio should change once I have implimented multiple donations at once
-    // const donations = (id, token, ratio, rounds) => {
-    //   grantId: grantID,
-    //   token: quote.tokenInAddress,
-    //   // ratio: ethers.utils.parseEther(1/cart.length)
-    //   ratio: ethers.utils.parseEther('1'),
-    //   rounds: [matchingRound]
-    // };
-    const Donations = (id, token, ratio, rounds) => {
-        this.grantId = id,
-        this.token = token,
-        // ratio: ethers.utils.parseEther(1/cart.length)
-        this.ratio = ratio,
-        this.rounds = rounds
+    const donations = {
+      grantId: grantID,
+      token: quote.tokenInAddress,
+      ratio: ethers.utils.parseEther('1'),
+      rounds: [matchingRound]
     };
 
     // Sample Swap Object. Data field is equal to zero if no swap is needed
@@ -74,10 +64,6 @@ export default function DonationView({ address, signer, tx, writeContracts, read
       data: response != 0 ? response.data.methodParameters.calldata : response,
       value: response != 0 ? response.data.methodParameters.value : response
     };
-
-    const donations = cart.map(x => {
-      return new Donations(x, donationToken, ratio, rounds);
-    })
 
     // These two lines create a contract instance to approve tokens for swap
     const erc20abi = [
@@ -90,9 +76,7 @@ export default function DonationView({ address, signer, tx, writeContracts, read
     if (await allowance < swap.inputAmount) await tx(approveToken.approve(grantRoundManagerAddress, ethers.utils.parseEther(donationAmount)));
 
     // Submit the tx
-    // There is only going to be one swap object for now because for this MVP we
-    // are only allowing single token donations 
-    await tx(writeContracts.GrantRoundManager.donate(swap, donations));
+    await tx(writeContracts.GrantRoundManager.donate([swap], [donations]));
     setIsLoading(false);
   }
 
@@ -103,51 +87,49 @@ export default function DonationView({ address, signer, tx, writeContracts, read
     , outputToken);
 
   return (
-    <Row justify="center">
-      <Col lg={8} sm={16}>
-        <Title >Donation View</Title>
-        <Form name="Donate to a grant" onFinish={axiosTest}>
-          <Space direction="vertical">
-            <Form.Item>
-              <Input
-                placeholder="Grant ID"
-                onChange={e => {
-                  setGrantID(e.target.value);
-                }}
-              />
-            </Form.Item>
-            <Form.Item>
-              <Input
-                placeholder="Donation Token"
-                onChange={e => {
-                  setInputToken(e.target.value);
-                }}
-              />
-            </Form.Item>
-            <Form.Item>
-              <Input
-                placeholder="Donation Amount"
-                onChange={e => {
-                  setDonationAmount(e.target.value);
-                }}
-              />
-            </Form.Item>
-            <Form.Item>
-              <Input
-                placeholder="Matching Round Address"
-                onChange={e => {
-                  setMatchingRound(e.target.value);
-                }}
-              />
-            </Form.Item>
-            <Form.Item name="Submit">
-              <Button type="primary" htmlType="submit" loading={isLoading}>
-                Donate!
-              </Button>
-            </Form.Item>
-          </Space>
-        </Form>
-      </Col>
-    </Row>
+      <Row justify="center">
+        <Col>
+          <Form name="Donate to a grant" onFinish={axiosTest}>
+            <Space direction="vertical">
+              <Form.Item>
+                <Input placeholder="Grant ID"
+                  onChange={e => {
+                    setGrantID(e.target.value);
+                  }}
+                />
+              </Form.Item>
+              <Form.Item>
+                <Input
+                  placeholder="Donation Token"
+                  onChange={e => {
+                    setInputToken(e.target.value);
+                  }}
+                />
+              </Form.Item>
+              <Form.Item>
+                <Input
+                  placeholder="Donation Amount"
+                  onChange={e => {
+                    setDonationAmount(e.target.value);
+                  }}
+                />
+              </Form.Item>
+              <Form.Item>
+                <Input
+                  placeholder="Matching Round Address"
+                  onChange={e => {
+                    setMatchingRound(e.target.value);
+                  }}
+                />
+              </Form.Item>
+              <Form.Item name="Submit">
+                <Button type="primary" htmlType="submit" loading={isLoading}>
+                  Donate!
+                </Button>
+              </Form.Item>
+            </Space>
+          </Form>
+        </Col>
+      </Row>
   );
 }

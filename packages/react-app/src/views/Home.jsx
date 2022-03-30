@@ -3,18 +3,12 @@ import { Typography, List, Card, Descriptions } from "antd";
 import { Link} from "react-router-dom";
 import { useContractReader } from "eth-hooks";
 import { Address } from "../components";
-import { DetailedGrantView, NameViewer } from "./";
+import { NameViewer } from "./";
 
 const { Title } = Typography;
 
-/**
- * web3 props can be passed from '../App.jsx' into your local view component for use
- * @param {*} yourLocalBalance balance on current network
- * @param {*} readContracts contracts from current chain already pre-loaded using ethers contract module. More here https://docs.ethers.io/v5/api/contract/contract/
- * @returns react component
- */
-function Home({ mainnetProvider, readContracts, blockExplorer }) {
-  const allGrants = useContractReader(readContracts, "GrantRegistry", "getAllGrants");
+function Home({ readContracts, blockExplorer }) {
+  const allGrants = useContractReader(readContracts, "GrantRegistry", "getAllGrants", 300000);
   return (
     <div>
       <Title >Grant Explorer</Title>
@@ -40,14 +34,8 @@ function Home({ mainnetProvider, readContracts, blockExplorer }) {
                     }}
                   >
                     <div style={{ fontSize: "1rem", fontWeight: 500 }}>
-                      <Link to={`/grant/${item.metaPtr.pointer}`}><NameViewer metaPtr={item.metaPtr.pointer}/><NameViewer /></Link>
+                      <Link to={`/grant/${item.metaPtr.pointer}/${item.id}`}><NameViewer metaPtr={item.metaPtr.pointer}/><NameViewer /></Link>
                     </div>
-                    {/* <Address
-                      fontSize="15"
-                      value={item.owner}
-                      blockExplorer={blockExplorer}
-                      ensProvider={mainnetProvider}
-                    /> */}
                   </div>
                 }
               >

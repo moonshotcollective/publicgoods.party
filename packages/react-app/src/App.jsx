@@ -28,7 +28,7 @@ import externalContracts from "./contracts/external_contracts";
 import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
 import { useStaticJsonRPC } from "./hooks";
-import { DonationView, DetailedGrantView, GrantCreator , Home, GrantRoundCreator } from "./views";
+import { DonationView, DetailedGrantView, GrantCreator, Home, GrantRoundCreator } from "./views";
 
 const { ethers } = require("ethers");
 
@@ -55,6 +55,8 @@ function App(props) {
   const [address, setAddress] = useState();
   const [selectedNetwork, setSelectedNetwork] = useState(networkOptions[0]);
   const location = useLocation();
+
+  const [cart, setCart] = useState([]);
 
   /// 📡 What chain are your contracts deployed to?
   const targetNetwork = NETWORKS[selectedNetwork]; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
@@ -121,7 +123,7 @@ function App(props) {
   const contractConfig = { deployedContracts: deployedContracts || {}, externalContracts: externalContracts || {} };
 
   // Load in your local 📝 contract and read a value from it:
-  const readContracts = useContractLoader(localProvider, contractConfig,localChainId);
+  const readContracts = useContractLoader(localProvider, contractConfig, localChainId);
 
   // If you want to make 🔐 write transactions to your contracts, use the userSigner:
   const writeContracts = useContractLoader(userSigner, contractConfig, localChainId);
@@ -226,24 +228,25 @@ function App(props) {
         <Route exact path="/">
           <Home yourLocalBalance={yourLocalBalance} readContracts={readContracts} />
         </Route>
-        <Route path="/grant/:metaPtr">
-          <DetailedGrantView />
+        <Route path="/grant/:metaPtr/:id">
+          <DetailedGrantView
+          cart={cart}
+          />
         </Route>
         <Route path="/grantui">
           <GrantCreator tx={tx} writeContracts={writeContracts} mainnetProvider={mainnetProvider} />
         </Route>
         <Route path="/round">
-          <GrantRoundCreator  tx={tx} writeContracts={writeContracts} mainnetProvider={mainnetProvider} readContracts={readContracts} localProvider={localProvider}/>
+          <GrantRoundCreator tx={tx} writeContracts={writeContracts} mainnetProvider={mainnetProvider} readContracts={readContracts} localProvider={localProvider} />
         </Route>
         <Route path="/donation">
           <DonationView
             tx={tx}
             address={address}
-            localProvider={localProvider}
-            mainnetProvider={mainnetProvider}
             signer={userSigner}
             writeContracts={writeContracts}
             readContracts={readContracts}
+            cart={cart}
           />
         </Route>
         <Route exact path="/debug">
