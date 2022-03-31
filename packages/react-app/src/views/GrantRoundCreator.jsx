@@ -1,18 +1,19 @@
-import { React, useState } from "react";
-import { AddressInput, Events } from "../components";
-import { DatePicker, Typography, Form, Row, Col, Button, Input, Space } from "antd";
+import { React, useState, useEffect } from "react";
+import { AddressInput, Events, ActiveRounds } from "../components";
+import { DatePicker, Typography, Form, Row, Col, Button, Input, Space, List } from "antd";
 import { PINATA_API_KEY, PINATA_API_SECRET } from "../constants";
 
 const axios = require("axios");
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
 
-export default function GrantRoundCreator ({
+export default function GrantRoundCreator({
   tx,
   writeContracts,
   mainnetProvider,
   readContracts,
-  localProvider
+  localProvider,
+  signer
 }) {
   const [grantTitle, setGrantTitle] = useState();
   const [grantDescription, setGrantDescription] = useState();
@@ -59,7 +60,7 @@ export default function GrantRoundCreator ({
   return (
     <Row justify="center">
       <Col lg={8} sm={16}>
-      <Title >Grant Round Manager</Title>
+        <Title >Grant Round Manager</Title>
         <Form
           name="Start a grant Round"
           onFinish={async () => await pinJSONToIPFS(PINATA_API_KEY, PINATA_API_SECRET, grantObject)}
@@ -131,14 +132,11 @@ export default function GrantRoundCreator ({
             </Form.Item>
           </Space>
         </Form>
-        <Events
-          title={"Other Grant Rounds Made:"}
-          contracts={readContracts}
-          contractName="GrantRoundManager"
-          eventName="GrantRoundCreated"
-          localProvider={localProvider}
-          mainnetProvider={mainnetProvider}
-          startBlock={1}
+        <ActiveRounds
+        readContracts={readContracts}
+        localProvider={localProvider}
+        mainnetProvider={mainnetProvider}
+        signer={signer}
         />
       </Col>
     </Row>

@@ -3,11 +3,12 @@ import { useState, useEffect } from "react";
 import { Typography, Button, Input, Form, Row, Col, Space } from "antd";
 import { ethers } from "ethers";
 import { useContractReader } from "eth-hooks";
+import { ActiveRounds } from "../components";
 
 const axios = require('axios');
 const { Title } = Typography;
 
-export default function DonationView({ address, signer, tx, writeContracts, readContracts, cart }) {
+export default function DonationView({ address, signer, tx, writeContracts, readContracts, cart, mainnetProvider, localProvider}) {
   const [grantID, setGrantID] = useState();
   // TODO: Change this token to be empty after I am done testing
   const [inputToken, setInputToken] = useState("0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984");
@@ -51,6 +52,7 @@ export default function DonationView({ address, signer, tx, writeContracts, read
     }
 
     // Sample Donations Object
+
     // Ratio should change once I have implimented multiple donations at once
     // const donations = (id, token, ratio, rounds) => {
     //   grantId: grantID,
@@ -68,12 +70,19 @@ export default function DonationView({ address, signer, tx, writeContracts, read
     };
 
     // Sample Swap Object. Data field is equal to zero if no swap is needed
-    const swap = {
-      inputToken: inputToken,
-      inputAmount: ethers.utils.parseEther(donationAmount),
-      data: response != 0 ? response.data.methodParameters.calldata : response,
-      value: response != 0 ? response.data.methodParameters.value : response
-    };
+    // const swap = {
+    //   inputToken: inputToken,
+    //   inputAmount: ethers.utils.parseEther(donationAmount),
+    //   data: response != 0 ? response.data.methodParameters.calldata : response,
+    //   value: response != 0 ? response.data.methodParameters.value : response
+    // };
+
+    const Swap = (inputToken, inputAmount, data, value) => {
+      this.inputToken = inputToken,
+      this.inputAmount = inputAmount,
+      this.data = data,
+      this.value = value
+    }
 
     const donations = cart.map(x => {
       return new Donations(x, donationToken, ratio, rounds);
@@ -147,6 +156,12 @@ export default function DonationView({ address, signer, tx, writeContracts, read
             </Form.Item>
           </Space>
         </Form>
+        <ActiveRounds
+        mainnetProvider={mainnetProvider}
+        localProvider={localProvider}
+        signer={signer}
+        readContracts={readContracts}
+        />
       </Col>
     </Row>
   );

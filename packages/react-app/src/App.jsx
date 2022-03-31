@@ -237,7 +237,7 @@ function App(props) {
           <GrantCreator tx={tx} writeContracts={writeContracts} mainnetProvider={mainnetProvider} />
         </Route>
         <Route path="/round">
-          <GrantRoundCreator tx={tx} writeContracts={writeContracts} mainnetProvider={mainnetProvider} readContracts={readContracts} localProvider={localProvider} />
+          <GrantRoundCreator tx={tx} writeContracts={writeContracts} mainnetProvider={mainnetProvider} readContracts={readContracts} localProvider={localProvider} signer={userSigner} />
         </Route>
         <Route path="/donation">
           <DonationView
@@ -246,6 +246,8 @@ function App(props) {
             signer={userSigner}
             writeContracts={writeContracts}
             readContracts={readContracts}
+            mainnetProvider={mainnetProvider}
+            localProvider={localProvider}
             cart={cart}
           />
         </Route>

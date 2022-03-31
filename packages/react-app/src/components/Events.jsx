@@ -20,7 +20,7 @@ import { Address } from "../components";
 */
 
 export default function Events({ contracts, contractName, eventName, localProvider, mainnetProvider, startBlock, title }) {
-  // 📟 Listen for broadcast events
+
   const events = useEventListener(contracts, contractName, eventName, localProvider, startBlock);
 
   return (
