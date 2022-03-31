@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Typography, Button, Input, Form, Row, Col, Space } from "antd";
 import { ethers } from "ethers";
 import { useContractReader } from "eth-hooks";
-import { ActiveRounds } from "../components";
+import { ActiveRounds, TokenSelect } from "../components";
 
 const axios = require('axios');
 const { Title } = Typography;
@@ -113,6 +113,14 @@ export default function DonationView({ address, signer, tx, writeContracts, read
                 onChange={e => {
                   setInputToken(e.target.value);
                 }}
+              />
+            </Form.Item>
+            <Form.Item>
+              <TokenSelect 
+              chainId={1}
+              onChange={setInputToken}
+              localProvider={localProvider}
+              nativeToken={{name: 'Native token', symbol: 'ETH'}}
               />
             </Form.Item>
             <Form.Item>
