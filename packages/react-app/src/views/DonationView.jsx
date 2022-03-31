@@ -8,8 +8,7 @@ import { ActiveRounds } from "../components";
 const axios = require('axios');
 const { Title } = Typography;
 
-export default function DonationView({ address, signer, tx, writeContracts, readContracts, cart, mainnetProvider, localProvider}) {
-  const [grantID, setGrantID] = useState();
+export default function DonationView({ address, signer, tx, writeContracts, readContracts, cart, mainnetProvider, localProvider }) {
   // TODO: Change this token to be empty after I am done testing
   const [inputToken, setInputToken] = useState("0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984");
   const [donationAmount, setDonationAmount] = useState();
@@ -51,65 +50,56 @@ export default function DonationView({ address, signer, tx, writeContracts, read
         });
     }
 
-    // Sample Donations Object
-
-    // Ratio should change once I have implimented multiple donations at once
-    // const donations = (id, token, ratio, rounds) => {
-    //   grantId: grantID,
-    //   token: quote.tokenInAddress,
-    //   // ratio: ethers.utils.parseEther(1/cart.length)
-    //   ratio: ethers.utils.parseEther('1'),
-    //   rounds: [matchingRound]
-    // };
-    const Donations = (id, token, ratio, rounds) => {
+    class Donations {
+      constructor(id, token, ratio, rounds) {
         this.grantId = id,
-        this.token = token,
-        // ratio: ethers.utils.parseEther(1/cart.length)
-        this.ratio = ratio,
-        this.rounds = rounds
+          this.token = token,
+          this.ratio = ratio,
+          this.ratio = ratio,
+          this.rounds = rounds;
+      }
     };
 
     // Sample Swap Object. Data field is equal to zero if no swap is needed
-    // const swap = {
-    //   inputToken: inputToken,
-    //   inputAmount: ethers.utils.parseEther(donationAmount),
-    //   data: response != 0 ? response.data.methodParameters.calldata : response,
-    //   value: response != 0 ? response.data.methodParameters.value : response
-    // };
-
-    const Swap = (inputToken, inputAmount, data, value) => {
-      this.inputToken = inputToken,
-      this.inputAmount = inputAmount,
-      this.data = data,
-      this.value = value
-    }
+    const swap = {
+      inputToken: inputToken,
+      inputAmount: ethers.utils.parseEther(donationAmount),
+      data: response != 0 ? response.data.methodParameters.calldata : response,
+      value: response != 0 ? response.data.methodParameters.value : response
+    };
 
     const donations = cart.map(x => {
-      return new Donations(x, donationToken, ratio, rounds);
+      return new Donations(x, inputToken, ethers.utils.parseEther('1'), [matchingRound]);
     })
 
     // These two lines create a contract instance to approve tokens for swap
     const erc20abi = [
       'function approve(address spender, uint rawAmount) external returns (bool)', 'function allowance(address _owner, address _spender) public view returns (uint256 remaining)'
     ];
-    const approveToken = await new ethers.Contract(quote.tokenInAddress, erc20abi, signer);
+    const approveToken = new ethers.Contract(quote.tokenInAddress, erc20abi, signer);
 
     const allowance = await approveToken.allowance(address, grantRoundManagerAddress);
     // Only increase allowance if required
     if (await allowance < swap.inputAmount) await tx(approveToken.approve(grantRoundManagerAddress, ethers.utils.parseEther(donationAmount)));
 
     // Submit the tx
-    // There is only going to be one swap object for now because for this MVP we
-    // are only allowing single token donations 
-    await tx(writeContracts.GrantRoundManager.donate(swap, donations));
+    // There is only going to be one swap object for now because for this MVP
+    if (cart.length == 1) {
+      await tx(writeContracts.GrantRoundManager.donate([swap], donations));
+    } else {
+      alert(
+        'This current version only supports a single grant donation per tx, please refresh app to to clear your cart.'
+      )
+    }
     setIsLoading(false);
   }
 
   // Keep the button greyed out until all dependencies are loaded
   useEffect(() => {
     grantRoundManagerAddress != "loading" ? setIsLoading(false) : setIsLoading(true);
+    console.log(cart)
   }
-    , outputToken);
+    , [outputToken]);
 
   return (
     <Row justify="center">
@@ -117,14 +107,6 @@ export default function DonationView({ address, signer, tx, writeContracts, read
         <Title >Donation View</Title>
         <Form name="Donate to a grant" onFinish={axiosTest}>
           <Space direction="vertical">
-            <Form.Item>
-              <Input
-                placeholder="Grant ID"
-                onChange={e => {
-                  setGrantID(e.target.value);
-                }}
-              />
-            </Form.Item>
             <Form.Item>
               <Input
                 placeholder="Donation Token"
@@ -157,10 +139,10 @@ export default function DonationView({ address, signer, tx, writeContracts, read
           </Space>
         </Form>
         <ActiveRounds
-        mainnetProvider={mainnetProvider}
-        localProvider={localProvider}
-        signer={signer}
-        readContracts={readContracts}
+          mainnetProvider={mainnetProvider}
+          localProvider={localProvider}
+          signer={signer}
+          readContracts={readContracts}
         />
       </Col>
     </Row>
