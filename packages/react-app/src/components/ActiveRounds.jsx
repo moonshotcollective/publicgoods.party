@@ -6,20 +6,13 @@ import { ethers } from "ethers";
 
 const { Title } = Typography;
 
-export default function ActiveRounds({readContracts, localProvider, signer, mainnetProvider}) {
+export default function ActiveRounds({ readContracts, localProvider, signer, mainnetProvider }) {
+
   const [rounds, setRounds] = useState();
   const events = useEventListener(readContracts, "GrantRoundManager", "GrantRoundCreated", localProvider, 1);
-  async function mapGrants(events) {
-    const roundABI = ['function isActive() external view returns(bool)']
-    const mapped = events.map(x => {
-      const round = new ethers.Contract(x.args[0], roundABI, signer);
-      if(round.isActive()) return x.args[0];
-    })
-    return mapped;
-  }
+  const roundABI = ['function isActive() external view returns(bool)'];
 
-  useEffect(async () => {
-    setRounds(await mapGrants(events));
+  useEffect(() => {
   }, [events])
 
   return (

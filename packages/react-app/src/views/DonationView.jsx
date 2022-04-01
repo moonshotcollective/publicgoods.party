@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Typography, Button, Input, Form, Row, Col, Space } from "antd";
 import { ethers } from "ethers";
 import { useContractReader } from "eth-hooks";
-import { ActiveRounds, TokenSelect } from "../components";
+import { ActiveRounds, TokenSelect, RinkebyDropdown } from "../components";
 
 const axios = require('axios');
 const { Title } = Typography;
@@ -70,7 +70,7 @@ export default function DonationView({ address, signer, tx, writeContracts, read
 
     const donations = cart.map(x => {
       return new Donations(x, inputToken, ethers.utils.parseEther('1'), [matchingRound]);
-    })
+    });
 
     // These two lines create a contract instance to approve tokens for swap
     const erc20abi = [
@@ -89,15 +89,15 @@ export default function DonationView({ address, signer, tx, writeContracts, read
     } else {
       alert(
         'This current version only supports a single grant donation per tx, please refresh app to to clear your cart.'
-      )
+      );
     }
     setIsLoading(false);
   }
 
+
   // Keep the button greyed out until all dependencies are loaded
   useEffect(() => {
     grantRoundManagerAddress != "loading" ? setIsLoading(false) : setIsLoading(true);
-    console.log(cart)
   }
     , [outputToken]);
 
@@ -108,21 +108,20 @@ export default function DonationView({ address, signer, tx, writeContracts, read
         <Form name="Donate to a grant" onFinish={axiosTest}>
           <Space direction="vertical">
             <Form.Item>
-              <Input
-                placeholder="Donation Token"
-                onChange={e => {
-                  setInputToken(e.target.value);
-                }}
+              <RinkebyDropdown
+                func={(value) => setInputToken(value)}
               />
             </Form.Item>
+            {/*
             <Form.Item>
-              <TokenSelect 
+              <TokenSelect
               chainId={1}
               onChange={setInputToken}
               localProvider={localProvider}
               nativeToken={{name: 'Native token', symbol: 'ETH'}}
               />
             </Form.Item>
+             */}
             <Form.Item>
               <Input
                 placeholder="Donation Amount"

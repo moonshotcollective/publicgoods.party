@@ -24,3 +24,4 @@ export { default as NetworkSwitch } from "./NetworkSwitch";
 export { default as Donate } from "./Donate";
 export { default as ActiveRounds} from "./ActiveRounds";
 export { default as TokenSelect } from "./TokenSelect";
+export { default as RinkebyDropdown} from "./RinkebyDropdown";
