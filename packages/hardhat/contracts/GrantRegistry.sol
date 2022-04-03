@@ -17,6 +17,7 @@ contract GrantRegistry {
     /// @notice Number of grants stored in this registry
     uint96 public grantCount;
 
+
     /// @notice Grant object
     struct Grant {
         // Slot 1 (within this struct)
