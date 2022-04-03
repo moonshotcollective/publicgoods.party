@@ -1,5 +1,5 @@
-import { React, useState, useEffect } from "react";
-import { AddressInput, Events, ActiveRounds } from "../components";
+import { React, useState } from "react";
+import { AddressInput, ActiveRounds, RinkebyDropdown } from "../components";
 import { DatePicker, Typography, Form, Row, Col, Button, Input, Space, List } from "antd";
 import { PINATA_API_KEY, PINATA_API_SECRET } from "../constants";
 
@@ -109,12 +109,8 @@ export default function GrantRoundCreator({
               />
             </Form.Item>
             <Form.Item>
-              <AddressInput
-                autoFocus
-                ensProvider={mainnetProvider}
-                placeholder="Donation Matching Token"
-                value={matchingTokenAddress}
-                onChange={setMatchingTokenAddress}
+              <RinkebyDropdown
+                func={(value) => setMatchingTokenAddress(value)}
               />
             </Form.Item>
             <Form.Item>
