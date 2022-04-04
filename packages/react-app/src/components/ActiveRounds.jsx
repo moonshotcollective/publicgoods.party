@@ -20,12 +20,12 @@ export default function ActiveRounds({ readContracts, localProvider, mainnetProv
             const response = await contract.isActive();
             if (response) returnArr.push(emittedRound.args[0]);
         }
-        setRounds(returnArr)
+      setRounds(returnArr);
     }
 
     useEffect(() => {
-        if(events[0]) getActiveContracts(events)
-    }, [events])
+      if(events[0]) getActiveContracts(events);
+    }, [events]);
 
     return (
         <div>
