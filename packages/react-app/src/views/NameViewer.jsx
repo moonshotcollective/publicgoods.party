@@ -4,15 +4,17 @@ import { useState, useEffect} from "react";
 
 function NameViewer(props) {
   const baseURL = "https://bonez.mypinata.cloud/ipfs/" + props.metaPtr;
-  const [post, setPost] = useState(null);
-  useEffect(() => {
-    axios.get(baseURL).then((response) => {
+  const [post, setPost] = useState("...");
+
+  async function fetchData(){
+    await axios.get(baseURL).then((response) => {
       setPost(response.data);
     }, (error) => {
-      setPost("...")
     });
-  }), [];
-  if(!post) return null;
+  }
+  useEffect(() => {
+    if(props.metaPtr != undefined) fetchData(baseURL);
+  }), [post];
   return (
     <div>
       {post.title}
